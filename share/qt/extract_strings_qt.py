@@ -5,6 +5,7 @@ they can be picked up by Qt linguist.
 '''
 from subprocess import Popen, PIPE
 import glob
+import operator
 
 OUT_CPP="src/qt/bitcoinstrings.cpp"
 EMPTY=['""']
@@ -51,7 +52,7 @@ files = glob.glob('src/*.cpp') + glob.glob('src/*.h')
 child = Popen(['xgettext','--output=-','-n','--keyword=_'] + files, stdout=PIPE)
 (out, err) = child.communicate()
 
-messages = parse_po(out) 
+messages = parse_po(str(out))
 
 f = open(OUT_CPP, 'w')
 f.write("""#include <QtGlobal>
@@ -62,7 +63,8 @@ f.write("""#include <QtGlobal>
 #define UNUSED
 #endif
 """)
-f.write('static const char UNUSED *bitcoin_strings[] = {')
+f.write('static const char UNUSED *bitcoin_strings[] = {\n')
+messages.sort(key=operator.itemgetter(0))
 for (msgid, msgstr) in messages:
     if msgid != EMPTY:
         f.write('QT_TRANSLATE_NOOP("bitcoin-core", %s),\n' % ('\n'.join(msgid)))

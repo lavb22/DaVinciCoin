@@ -37,7 +37,7 @@ string HTTPPost(const string& strMsg, const map<string,string>& mapRequestHeader
 {
     ostringstream s;
     s << "POST / HTTP/1.1\r\n"
-      << "User-Agent: blackcoin-json-rpc/" << FormatFullVersion() << "\r\n"
+      << "User-Agent: ppcoin-json-rpc/" << FormatFullVersion() << "\r\n"
       << "Host: 127.0.0.1\r\n"
       << "Content-Type: application/json\r\n"
       << "Content-Length: " << strMsg.size() << "\r\n"
@@ -52,7 +52,15 @@ string HTTPPost(const string& strMsg, const map<string,string>& mapRequestHeader
 
 static string rfc1123Time()
 {
-    return DateTimeStrFormat("%a, %d %b %Y %H:%M:%S +0000", GetTime());
+    char buffer[64];
+    time_t now;
+    time(&now);
+    struct tm* now_gmt = gmtime(&now);
+    string locale(setlocale(LC_TIME, NULL));
+    setlocale(LC_TIME, "C"); // we want POSIX (aka "C") weekday/month strings
+    strftime(buffer, sizeof(buffer), "%a, %d %b %Y %H:%M:%S +0000", now_gmt);
+    setlocale(LC_TIME, locale.c_str());
+    return string(buffer);
 }
 
 string HTTPReply(int nStatus, const string& strMsg, bool keepalive)
@@ -60,7 +68,7 @@ string HTTPReply(int nStatus, const string& strMsg, bool keepalive)
     if (nStatus == HTTP_UNAUTHORIZED)
         return strprintf("HTTP/1.0 401 Authorization Required\r\n"
             "Date: %s\r\n"
-            "Server: blackcoin-json-rpc/%s\r\n"
+            "Server: ppcoin-json-rpc/%s\r\n"
             "WWW-Authenticate: Basic realm=\"jsonrpc\"\r\n"
             "Content-Type: text/html\r\n"
             "Content-Length: 296\r\n"
@@ -73,7 +81,7 @@ string HTTPReply(int nStatus, const string& strMsg, bool keepalive)
             "<META HTTP-EQUIV='Content-Type' CONTENT='text/html; charset=ISO-8859-1'>\r\n"
             "</HEAD>\r\n"
             "<BODY><H1>401 Unauthorized.</H1></BODY>\r\n"
-            "</HTML>\r\n", rfc1123Time(), FormatFullVersion());
+            "</HTML>\r\n", rfc1123Time().c_str(), FormatFullVersion().c_str());
     const char *cStatus;
          if (nStatus == HTTP_OK) cStatus = "OK";
     else if (nStatus == HTTP_BAD_REQUEST) cStatus = "Bad Request";
@@ -85,18 +93,18 @@ string HTTPReply(int nStatus, const string& strMsg, bool keepalive)
             "HTTP/1.1 %d %s\r\n"
             "Date: %s\r\n"
             "Connection: %s\r\n"
-            "Content-Length: %u\r\n"
+            "Content-Length: %" PRIszu"\r\n"
             "Content-Type: application/json\r\n"
-            "Server: blackcoin-json-rpc/%s\r\n"
+            "Server: ppcoin-json-rpc/%s\r\n"
             "\r\n"
             "%s",
         nStatus,
         cStatus,
-        rfc1123Time(),
+        rfc1123Time().c_str(),
         keepalive ? "keep-alive" : "close",
         strMsg.size(),
-        FormatFullVersion(),
-        strMsg);
+        FormatFullVersion().c_str(),
+        strMsg.c_str());
 }
 
 bool ReadHTTPRequestLine(std::basic_istream<char>& stream, int &proto,

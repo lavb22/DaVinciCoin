@@ -4,7 +4,6 @@
 #include "uint256.h"
 
 #include <QList>
-#include <QString>
 
 class CWallet;
 class CWalletTx;
@@ -15,42 +14,42 @@ class TransactionStatus
 {
 public:
     TransactionStatus():
-        countsForBalance(false), sortKey(""),
+        confirmed(false), sortKey(""), maturity(Mature),
         matures_in(0), status(Offline), depth(0), open_for(0), cur_num_blocks(-1)
     { }
 
-    enum Status {
-        Confirmed,          /**< Have 6 or more confirmations (normal tx) or fully mature (mined tx) **/
-        /// Normal (sent/received) transactions
-        OpenUntilDate,      /**< Transaction not yet final, waiting for date */
-        OpenUntilBlock,     /**< Transaction not yet final, waiting for block */
-        Offline,            /**< Not sent to any other nodes **/
-        Unconfirmed,        /**< Not yet mined into a block **/
-        Confirming,         /**< Confirmed, but waiting for the recommended number of confirmations **/
-        Conflicted,         /**< Conflicts with other transaction or mempool **/
-        /// Generated (mined) transactions
-        Immature,           /**< Mined but waiting for maturity */
-        MaturesWarning,     /**< Transaction will likely not mature because no nodes have confirmed */
-        NotAccepted         /**< Mined but not accepted */
+    enum Maturity
+    {
+        Immature,
+        Mature,
+        MaturesWarning, /**< Transaction will likely not mature because no nodes have confirmed */
+        NotAccepted
     };
 
-    /// Transaction counts towards available balance
-    bool countsForBalance;
-    /// Sorting key based on status
+    enum Status {
+        OpenUntilDate,
+        OpenUntilBlock,
+        Offline,
+        Unconfirmed,
+        HaveConfirmations
+    };
+
+    bool confirmed;
     std::string sortKey;
 
     /** @name Generated (mined) transactions
        @{*/
+    Maturity maturity;
     int matures_in;
     /**@}*/
 
     /** @name Reported status
        @{*/
     Status status;
-    int64_t depth;
-    int64_t open_for; /**< Timestamp if status==OpenUntilDate, otherwise number
-                       of additional blocks that need to be mined before
-                       finalization */
+    int64 depth;
+    int64 open_for; /**< Timestamp if status==OpenUntilDate, otherwise number
+                      of additional blocks that need to be mined before
+                      finalization */
     /**@}*/
 
     /** Current number of blocks (to know whether cached status is still valid) */
@@ -71,26 +70,27 @@ public:
         SendToOther,
         RecvWithAddress,
         RecvFromOther,
-        SendToSelf
+        SendToSelf,
+        StakeMint
     };
 
-    /** Number of confirmation recommended for accepting a transaction */
-    static const int RecommendedNumConfirmations = 10;
+    /** Number of confirmation needed for transaction */
+    static const int NumConfirmations = 6;
 
     TransactionRecord():
             hash(), time(0), type(Other), address(""), debit(0), credit(0), idx(0)
     {
     }
 
-    TransactionRecord(uint256 hash, int64_t time):
+    TransactionRecord(uint256 hash, int64 time):
             hash(hash), time(time), type(Other), address(""), debit(0),
             credit(0), idx(0)
     {
     }
 
-    TransactionRecord(uint256 hash, int64_t time,
+    TransactionRecord(uint256 hash, int64 time,
                 Type type, const std::string &address,
-                int64_t debit, int64_t credit):
+                int64 debit, int64 credit):
             hash(hash), time(time), type(type), address(address), debit(debit), credit(credit),
             idx(0)
     {
@@ -104,11 +104,11 @@ public:
     /** @name Immutable transaction attributes
       @{*/
     uint256 hash;
-    qint64 time;
+    int64 time;
     Type type;
     std::string address;
-    qint64 debit;
-    qint64 credit;
+    int64 debit;
+    int64 credit;
     /**@}*/
 
     /** Subtransaction index, for sort key */
@@ -118,10 +118,7 @@ public:
     TransactionStatus status;
 
     /** Return the unique identifier for this transaction (part) */
-    QString getTxID() const;
-
-    /** Format subtransaction id */
-    static QString formatSubTxId(const uint256 &hash, int vout);
+    std::string getTxID();
 
     /** Update status from core wallet tx.
      */

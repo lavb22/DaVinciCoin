@@ -8,7 +8,7 @@
 
 #include <string>
 
-static int noui_ThreadSafeMessageBox(const std::string& message, const std::string& caption, unsigned int style)
+static bool noui_ThreadSafeMessageBox(const std::string& message, const std::string& caption, unsigned int style)
 {
     std::string strCaption;
     // Check for usage of predefined caption
@@ -23,22 +23,22 @@ static int noui_ThreadSafeMessageBox(const std::string& message, const std::stri
         strCaption += _("Information");
         break;
     default:
-        strCaption += caption; // Use supplied caption
+        strCaption += caption; // Use supplied caption (can be empty)
     }
 
-    LogPrintf("%s: %s\n", caption, message);
+    printf("%s: %s\n", strCaption.c_str(), message.c_str());
     fprintf(stderr, "%s: %s\n", strCaption.c_str(), message.c_str());
-    return 4;
+    return false;
 }
 
-static bool noui_ThreadSafeAskFee(int64_t nFeeRequired, const std::string& strCaption)
+static bool noui_ThreadSafeAskFee(int64 /*nFeeRequired*/)
 {
     return true;
 }
 
 static void noui_InitMessage(const std::string &message)
 {
-    LogPrintf("init message: %s\n", message);
+    printf("init message: %s\n", message.c_str());
 }
 
 void noui_connect()
