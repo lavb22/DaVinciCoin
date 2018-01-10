@@ -28,9 +28,8 @@ public:
 
     // static because also called from sendcoinsdialog
     static void updateLabels(WalletModel*, QDialog*);
-    static QString getPriorityLabel(double);
 
-    static QList<std::pair<QString, qint64> > payAddresses;
+    static QList<qint64> payAmounts;
     static CCoinControl *coinControl;
 
 private:
@@ -48,7 +47,6 @@ private:
     QString strPad(QString, int, QString);
     void sortView(int, Qt::SortOrder);
     void updateView();
-    void unselectSpent();
 
     enum
     {
@@ -58,12 +56,9 @@ private:
         COLUMN_ADDRESS,
         COLUMN_DATE,
         COLUMN_CONFIRMATIONS,
-        COLUMN_COINAGE,
-        COLUMN_PRIORITY,
         COLUMN_TXHASH,
         COLUMN_VOUT_INDEX,
-        COLUMN_AMOUNT_INT64,
-        COLUMN_PRIORITY_INT64
+        COLUMN_AMOUNT_INT64
     };
 
 private slots:
@@ -79,7 +74,6 @@ private slots:
     void clipboardFee();
     void clipboardAfterFee();
     void clipboardBytes();
-    void clipboardPriority();
     void clipboardLowOutput();
     void clipboardChange();
     void radioTreeMode(bool);

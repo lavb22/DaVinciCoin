@@ -7,20 +7,15 @@
 
 #include "wallet.h"
 
-extern CWallet* pwalletMain;
+namespace boost {
+    class thread_group;
+} // namespace boost
 
+extern CWallet* pwalletMain;
 void StartShutdown();
 bool ShutdownRequested();
 void Shutdown();
 bool AppInit2(boost::thread_group& threadGroup);
-
-/* The help message mode determines what help message to show */
-enum HelpMessageMode
-{
-    HMM_BITCOIND,
-    HMM_BITCOIN_QT
-};
-
-std::string HelpMessage(HelpMessageMode mode);
+std::string HelpMessage();
 
 #endif

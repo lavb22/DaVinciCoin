@@ -1,5 +1,4 @@
 // Copyright (c) 2009-2012 The Bitcoin developers
-// Copyright (c) 2011-2017 The Peercoin developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -8,128 +7,58 @@
 
 #include "checkpoints.h"
 
-#include "db.h"
-#include "main.h"
 #include "txdb.h"
+#include "main.h"
 #include "uint256.h"
+
+
+static const int nCheckpointSpan = 500;
 
 namespace Checkpoints
 {
-    typedef std::map<int, uint256> MapCheckpoints;   // hardened checkpoints
+    typedef std::map<int, uint256> MapCheckpoints;
 
-    // How many times we expect transactions after the last checkpoint to
-    // be slower. This number is a compromise, as it can't be accurate for
-    // every system. When reindexing from a fast disk with a slow CPU, it
-    // can be up to 20, while when downloading from a slow network with a
-    // fast multicore CPU, it won't be much higher than 1.
-    static const double fSigcheckVerificationFactor = 5.0;
-
-    struct CCheckpointData {
-        const MapCheckpoints *mapCheckpoints;
-        int64 nTimeLastCheckpoint;
-        int64 nTransactionsLastCheckpoint;
-        double fTransactionsPerDay;
-    };
-
+    //
     // What makes a good checkpoint block?
     // + Is surrounded by blocks with reasonable timestamps
     //   (no blocks before with a timestamp after, none after with
     //    timestamp before)
     // + Contains no strange transactions
+    //
     static MapCheckpoints mapCheckpoints =
         boost::assign::map_list_of
-        ( 0, hashGenesisBlockOfficial )
-        ( 19080, uint256("0x000000000000bca54d9ac17881f94193fd6a270c1bb21c3bf0b37f588a40dbd7"))
-        ( 30583, uint256("0xd39d1481a7eecba48932ea5913be58ad3894c7ee6d5a8ba8abeb772c66a6696e"))
-        ( 99999, uint256("0x27fd5e1de16a4270eb8c68dee2754a64da6312c7c3a0e99a7e6776246be1ee3f"))
-        (219999, uint256("0xab0dad4b10d2370f009ed6df6effca1ba42f01d5070d6b30afeedf6463fbe7a2"))
-        (336000, uint256("0x4d261cef6e61a5ed8325e560f1d6e36f4698853a4c7134677f47a1d1d842bdf6"))
-        ;
-    static const CCheckpointData data = {
-        &mapCheckpoints,
-        1511962881, // * UNIX timestamp of last checkpoint block
-        1331659,   // * total number of transactions between genesis and last checkpoint
-                    //   (the tx=... number in the SetBestChain debug.log lines)
-        1000.0     // * estimated number of transactions per day after checkpoint
-    };
+        ( 5001,   uint256("0x2fac9021be0c311e7b6dc0933a72047c70f817e2eb1e01bede011193ad1b28bc") ) // hardfork
+        ( 10000,  uint256("0x0000000000827e4dc601f7310a91c45af8df0dfc1b6fa1dfa5b896cb00c8767c") ) // last pow block
+        ( 38425,  uint256("0x62bf2e9701226d2f88d9fa99d650bd81f3faf2e56f305b7d71ccd1e7aa9c3075") ) // hardfork
+        ( 254348, uint256("0x9bf8d9bd757d3ef23d5906d70567e5f0da93f1e0376588c8d421a95e2421838b") ) // minor network split
+        ( 319002, uint256("0x0011494d03b2cdf1ecfc8b0818f1e0ef7ee1d9e9b3d1279c10d35456bc3899ef") ) // hardfork
+        ( 872456, uint256("0xe4fd321ced1de06213d2e246b150b4bfd8c4aa0989965dce88f2a58668c64860") ) // hardfork
+    ;
 
-    static MapCheckpoints mapCheckpointsTestnet = 
-        boost::assign::map_list_of
-        ( 0, hashGenesisBlockTestNet )
-        ;
-    static const CCheckpointData dataTestnet = {
-        &mapCheckpointsTestnet,
-        1338180505,
-        16341,
-        300
-    };
-
-    const CCheckpointData &Checkpoints() {
-        if (fTestNet)
-            return dataTestnet;
-        else
-            return data;
-    }
+    // TestNet has no checkpoints
+    static MapCheckpoints mapCheckpointsTestnet;
 
     bool CheckHardened(int nHeight, const uint256& hash)
     {
-        if (!GetBoolArg("-checkpoints", true))
-            return true;
-
-        const MapCheckpoints& checkpoints = *Checkpoints().mapCheckpoints;
+        MapCheckpoints& checkpoints = (TestNet() ? mapCheckpointsTestnet : mapCheckpoints);
 
         MapCheckpoints::const_iterator i = checkpoints.find(nHeight);
         if (i == checkpoints.end()) return true;
         return hash == i->second;
     }
 
-    // Guess how far we are in the verification process at the given block index
-    double GuessVerificationProgress(CBlockIndex *pindex) {
-        if (pindex==NULL)
-            return 0.0;
-
-        int64 nNow = time(NULL);
-
-        double fWorkBefore = 0.0; // Amount of work done before pindex
-        double fWorkAfter = 0.0;  // Amount of work left after pindex (estimated)
-        // Work is defined as: 1.0 per transaction before the last checkoint, and
-        // fSigcheckVerificationFactor per transaction after.
-
-        const CCheckpointData &data = Checkpoints();
-
-        if (pindex->nChainTx <= data.nTransactionsLastCheckpoint) {
-            double nCheapBefore = pindex->nChainTx;
-            double nCheapAfter = data.nTransactionsLastCheckpoint - pindex->nChainTx;
-            double nExpensiveAfter = (nNow - data.nTimeLastCheckpoint)/86400.0*data.fTransactionsPerDay;
-            fWorkBefore = nCheapBefore;
-            fWorkAfter = nCheapAfter + nExpensiveAfter*fSigcheckVerificationFactor;
-        } else {
-            double nCheapBefore = data.nTransactionsLastCheckpoint;
-            double nExpensiveBefore = pindex->nChainTx - data.nTransactionsLastCheckpoint;
-            double nExpensiveAfter = (nNow - pindex->nTime)/86400.0*data.fTransactionsPerDay;
-            fWorkBefore = nCheapBefore + nExpensiveBefore*fSigcheckVerificationFactor;
-            fWorkAfter = nExpensiveAfter*fSigcheckVerificationFactor;
-        }
-
-        return fWorkBefore / (fWorkBefore + fWorkAfter);
-    }
-
     int GetTotalBlocksEstimate()
     {
-        if (!GetBoolArg("-checkpoints", true))
+        MapCheckpoints& checkpoints = (TestNet() ? mapCheckpointsTestnet : mapCheckpoints);
+
+        if (checkpoints.empty())
             return 0;
-
-        const MapCheckpoints& checkpoints = *Checkpoints().mapCheckpoints;
-
         return checkpoints.rbegin()->first;
     }
 
     CBlockIndex* GetLastCheckpoint(const std::map<uint256, CBlockIndex*>& mapBlockIndex)
     {
-        if (!GetBoolArg("-checkpoints", true))
-            return NULL;
-
-        const MapCheckpoints& checkpoints = *Checkpoints().mapCheckpoints;
+        MapCheckpoints& checkpoints = (TestNet() ? mapCheckpointsTestnet : mapCheckpoints);
 
         BOOST_REVERSE_FOREACH(const MapCheckpoints::value_type& i, checkpoints)
         {
@@ -141,9 +70,23 @@ namespace Checkpoints
         return NULL;
     }
 
-    uint256 GetLatestHardenedCheckpoint()
+    // Automatically select a suitable sync-checkpoint 
+    const CBlockIndex* AutoSelectSyncCheckpoint()
     {
-        const MapCheckpoints& checkpoints = *Checkpoints().mapCheckpoints;
-        return (checkpoints.rbegin()->second);
+        const CBlockIndex *pindex = pindexBest;
+        // Search backward for a block within max span and maturity window
+        while (pindex->pprev && pindex->nHeight + nCheckpointSpan > pindexBest->nHeight)
+            pindex = pindex->pprev;
+        return pindex;
+    }
+
+    // Check against synchronized checkpoint
+    bool CheckSync(int nHeight)
+    {
+        const CBlockIndex* pindexSync = AutoSelectSyncCheckpoint();
+
+        if (nHeight <= pindexSync->nHeight)
+            return false;
+        return true;
     }
 }

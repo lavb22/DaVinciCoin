@@ -29,13 +29,13 @@ BOOST_AUTO_TEST_CASE(varints)
 
     // decode
     for (int i = 0; i < 100000; i++) {
-        int j = -1;
+        int j;
         ss >> VARINT(j);
         BOOST_CHECK_MESSAGE(i == j, "decoded:" << j << " expected:" << i);
     }
 
     for (uint64 i = 0;  i < 100000000000ULL; i += 999999937) {
-        uint64 j = -1;
+        uint64 j;
         ss >> VARINT(j);
         BOOST_CHECK_MESSAGE(i == j, "decoded:" << j << " expected:" << i);
     }

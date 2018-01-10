@@ -2,6 +2,7 @@
 #define SENDCOINSDIALOG_H
 
 #include <QDialog>
+#include <QString>
 
 namespace Ui {
     class SendCoinsDialog;
@@ -29,7 +30,6 @@ public:
      */
     QWidget *setupTabChain(QWidget *prev);
 
-    void setAddress(const QString &address);
     void pasteEntry(const SendCoinsRecipient &rv);
     bool handleURI(const QString &uri);
 
@@ -60,7 +60,6 @@ private slots:
     void coinControlClipboardFee();
     void coinControlClipboardAfterFee();
     void coinControlClipboardBytes();
-    void coinControlClipboardPriority();
     void coinControlClipboardLowOutput();
     void coinControlClipboardChange();
 };

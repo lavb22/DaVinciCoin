@@ -8,17 +8,20 @@
 #include "init.h"
 #include <boost/algorithm/string/predicate.hpp>
 
-void DetectShutdownThread(boost::thread_group* threadGroup)
+void WaitForShutdown(boost::thread_group* threadGroup)
 {
-    bool shutdown = ShutdownRequested();
+    bool fShutdown = ShutdownRequested();
     // Tell the main threads to shutdown.
-    while (!shutdown)
+    while (!fShutdown)
     {
         MilliSleep(200);
-        shutdown = ShutdownRequested();
+        fShutdown = ShutdownRequested();
     }
     if (threadGroup)
+    {
         threadGroup->interrupt_all();
+        threadGroup->join_all();
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -28,7 +31,6 @@ void DetectShutdownThread(boost::thread_group* threadGroup)
 bool AppInit(int argc, char* argv[])
 {
     boost::thread_group threadGroup;
-    boost::thread* detectShutdownThread = NULL;
 
     bool fRet = false;
     try
@@ -48,15 +50,14 @@ bool AppInit(int argc, char* argv[])
         if (mapArgs.count("-?") || mapArgs.count("--help"))
         {
             // First part of help message is specific to bitcoind / RPC client
-            std::string strUsage = _("Peercoin version") + " " + FormatFullVersion() + "\n\n" +
+            std::string strUsage = _("BlackCoin version") + " " + FormatFullVersion() + "\n\n" +
                 _("Usage:") + "\n" +
-                  "  peercoind [options]                     " + "\n" +
-                  "  peercoind [options] <command> [params]  " + _("Send command to -server or peercoind") + "\n" +
-                  "  peercoind [options] help                " + _("List commands") + "\n" +
-                  "  peercoind [options] help <command>      " + _("Get help for a command") + "\n";
+                  "  blackcoind [options]                     " + "\n" +
+                  "  blackcoind [options] <command> [params]  " + _("Send command to -server or blackcoind") + "\n" +
+                  "  blackcoind [options] help                " + _("List commands") + "\n" +
+                  "  blackcoind [options] help <command>      " + _("Get help for a command") + "\n";
 
-            strUsage += "\n" + HelpMessage(HMM_BITCOIND);
-            strUsage += "\n" + HelpMessageCli(false);
+            strUsage += "\n" + HelpMessage();
 
             fprintf(stdout, "%s", strUsage.c_str());
             return false;
@@ -64,11 +65,15 @@ bool AppInit(int argc, char* argv[])
 
         // Command-line RPC
         for (int i = 1; i < argc; i++)
-            if (!IsSwitchChar(argv[i][0]) && !boost::algorithm::istarts_with(argv[i], "peercoin:") && !boost::algorithm::istarts_with(argv[i], "ppcoin:"))
+            if (!IsSwitchChar(argv[i][0]) && !boost::algorithm::istarts_with(argv[i], "blackcoin:"))
                 fCommandLine = true;
 
         if (fCommandLine)
         {
+            if (!SelectParamsFromCommandLine()) {
+                fprintf(stderr, "Error: invalid combination of -regtest and -testnet.\n");
+                return false;
+            }
             int ret = CommandLineRPC(argc, argv);
             exit(ret);
         }
@@ -96,25 +101,22 @@ bool AppInit(int argc, char* argv[])
         }
 #endif
 
-        detectShutdownThread = new boost::thread(boost::bind(&DetectShutdownThread, &threadGroup));
         fRet = AppInit2(threadGroup);
     }
     catch (std::exception& e) {
-        PrintExceptionContinue(&e, "AppInit()");
+        PrintException(&e, "AppInit()");
     } catch (...) {
-        PrintExceptionContinue(NULL, "AppInit()");
-    }
-    if (!fRet) {
-        if (detectShutdownThread)
-            detectShutdownThread->interrupt();
-        threadGroup.interrupt_all();
+        PrintException(NULL, "AppInit()");
     }
 
-    if (detectShutdownThread)
+    if (!fRet)
     {
-        detectShutdownThread->join();
-        delete detectShutdownThread;
-        detectShutdownThread = NULL;
+        threadGroup.interrupt_all();
+        // threadGroup.join_all(); was left out intentionally here, because we didn't re-test all of
+        // the startup-failure cases to make sure they don't result in a hang due to some
+        // thread-blocking-waiting-for-another-thread-during-startup case
+    } else {
+        WaitForShutdown(&threadGroup);
     }
     Shutdown();
 
@@ -125,6 +127,7 @@ extern void noui_connect();
 int main(int argc, char* argv[])
 {
     bool fRet = false;
+    fHaveGUI = false;
 
     // Connect bitcoind signal handlers
     noui_connect();

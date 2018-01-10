@@ -6,13 +6,13 @@
 #ifndef _BITCOINALERT_H_
 #define _BITCOINALERT_H_ 1
 
+#include "serialize.h"
+
 #include <set>
 #include <string>
 
-#include "uint256.h"
-#include "util.h"
-
 class CNode;
+class uint256;
 
 /** Alerts are for notifying old versions if they become too obsolete and
  * need to upgrade.  The message is displayed in the status bar.
@@ -24,8 +24,8 @@ class CUnsignedAlert
 {
 public:
     int nVersion;
-    int64 nRelayUntil;      // when newer nodes stop relaying to newer nodes
-    int64 nExpiration;
+    int64_t nRelayUntil;      // when newer nodes stop relaying to newer nodes
+    int64_t nExpiration;
     int nID;
     int nCancel;
     std::set<int> setCancel;
@@ -61,7 +61,6 @@ public:
     void SetNull();
 
     std::string ToString() const;
-    void print() const;
 };
 
 /** An alert is a combination of a serialized CUnsignedAlert and a signature. */

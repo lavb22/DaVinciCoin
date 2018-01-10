@@ -13,11 +13,11 @@ class QDateTime;
 class QTimer;
 QT_END_NAMESPACE
 
-enum BlockSource {
-    BLOCK_SOURCE_NONE,
-    BLOCK_SOURCE_REINDEX,
-    BLOCK_SOURCE_DISK,
-    BLOCK_SOURCE_NETWORK
+enum NumConnections {
+    CONNECTIONS_NONE = 0,
+    CONNECTIONS_IN   = (1U << 0),
+    CONNECTIONS_OUT  = (1U << 1),
+    CONNECTIONS_ALL  = (CONNECTIONS_IN | CONNECTIONS_OUT),
 };
 
 /** Model for Bitcoin network client. */
@@ -31,11 +31,14 @@ public:
 
     OptionsModel *getOptionsModel();
 
-    int getNumConnections() const;
+    //! Return number of connections, default is in- and outbound (total)
+    int getNumConnections(unsigned int flags = CONNECTIONS_ALL) const;
     int getNumBlocks() const;
     int getNumBlocksAtStartup();
 
-    double getVerificationProgress() const;
+    quint64 getTotalBytesRecv() const;
+    quint64 getTotalBytesSent() const;
+
     QDateTime getLastBlockDate() const;
 
     //! Return true if client connected to testnet
@@ -43,9 +46,7 @@ public:
     //! Return true if core is doing initial block download
     bool inInitialBlockDownload() const;
     //! Return true if core is importing blocks
-    enum BlockSource getBlockSource() const;
-    //! Return conservative estimate of total number of blocks, or 0 if unknown
-    int getNumBlocksOfPeers() const;
+    bool isImporting() const;
     //! Return warnings to be displayed in status bar
     QString getStatusBarWarnings() const;
 
@@ -59,9 +60,6 @@ private:
     OptionsModel *optionsModel;
 
     int cachedNumBlocks;
-    int cachedNumBlocksOfPeers;
-	bool cachedReindexing;
-	bool cachedImporting;
 
     int numBlocksAtStartup;
 
@@ -72,11 +70,12 @@ private:
 
 signals:
     void numConnectionsChanged(int count);
-    void numBlocksChanged(int count, int countOfPeers);
+    void numBlocksChanged(int count);
     void alertsChanged(const QString &warnings);
+    void bytesChanged(quint64 totalBytesIn, quint64 totalBytesOut);
 
     //! Asynchronous message notification
-    void message(const QString &title, const QString &message, unsigned int style);
+    void message(const QString &title, const QString &message, bool modal, unsigned int style);
 
 public slots:
     void updateTimer();

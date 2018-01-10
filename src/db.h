@@ -1,32 +1,32 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2012 The Bitcoin developers
-// Copyright (c) 2011-2017 The Peercoin developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
 #ifndef BITCOIN_DB_H
 #define BITCOIN_DB_H
 
-#include "main.h"
+#include "serialize.h"
+#include "sync.h"
+#include "version.h"
 
 #include <map>
 #include <string>
 #include <vector>
 
+#include <boost/filesystem/path.hpp>
 #include <db_cxx.h>
 
-class CAddress;
 class CAddrMan;
 class CBlockLocator;
 class CDiskBlockIndex;
-class CMasterKey;
+class CDiskTxPos;
 class COutPoint;
-class CWallet;
-class CWalletTx;
+class CTxIndex;
 
 extern unsigned int nWalletDBUpdated;
 
 void ThreadFlushWalletDB(const std::string& strWalletFile);
-bool BackupWallet(const CWallet& wallet, const std::string& strDest);
 
 
 class CDBEnv
@@ -34,7 +34,8 @@ class CDBEnv
 private:
     bool fDbEnvInit;
     bool fMockDb;
-    boost::filesystem::path path;
+    boost::filesystem::path pathEnv;
+    std::string strPath;
 
     void EnvShutdown();
 
@@ -47,7 +48,7 @@ public:
     CDBEnv();
     ~CDBEnv();
     void MakeMock();
-    bool IsMock() { return fMockDb; }
+    bool IsMock() { return fMockDb; };
 
     /*
      * Verify that database file strFile is OK. If it is not,
@@ -67,10 +68,10 @@ public:
     typedef std::pair<std::vector<unsigned char>, std::vector<unsigned char> > KeyValPair;
     bool Salvage(std::string strFile, bool fAggressive, std::vector<KeyValPair>& vResult);
 
-    bool Open(const boost::filesystem::path &path);
+    bool Open(boost::filesystem::path pathEnv_);
     void Close();
     void Flush(bool fShutdown);
-    void CheckpointLSN(std::string strFile);
+    void CheckpointLSN(const std::string& strFile);
 
     void CloseDb(const std::string& strFile);
     bool RemoveDb(const std::string& strFile);
@@ -97,11 +98,12 @@ protected:
     DbTxn *activeTxn;
     bool fReadOnly;
 
-    explicit CDB(const char* pszFile, const char* pszMode="r+");
+    explicit CDB(const std::string& strFilename, const char* pszMode="r+");
     ~CDB() { Close(); }
+
 public:
-    void Flush();
     void Close();
+
 private:
     CDB(const CDB&);
     void operator=(const CDB&);
@@ -305,24 +307,6 @@ public:
     }
 
     bool static Rewrite(const std::string& strFile, const char* pszSkip = NULL);
-};
-
-
-
-
-
-
-
-
-/** Access to the (IP) address database (peers.dat) */
-class CAddrDB
-{
-private:
-    boost::filesystem::path pathAddr;
-public:
-    CAddrDB();
-    bool Write(const CAddrMan& addr);
-    bool Read(CAddrMan& addr);
 };
 
 #endif // BITCOIN_DB_H

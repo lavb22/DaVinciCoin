@@ -10,7 +10,6 @@
 class OptionsModel;
 class AddressTableModel;
 class TransactionTableModel;
-class MintingTableModel;
 class CWallet;
 class CKeyID;
 class CPubKey;
@@ -62,14 +61,12 @@ public:
 
     OptionsModel *getOptionsModel();
     AddressTableModel *getAddressTableModel();
-    MintingTableModel *getMintingTableModel();
     TransactionTableModel *getTransactionTableModel();
 
-    qint64 getBalance() const;
+    qint64 getBalance(const CCoinControl *coinControl=NULL) const;
     qint64 getStake() const;
     qint64 getUnconfirmedBalance() const;
     qint64 getImmatureBalance() const;
-    int getNumTransactions() const;
     EncryptionStatus getEncryptionStatus() const;
 
     // Check address for validity
@@ -123,22 +120,20 @@ public:
     bool getPubKey(const CKeyID &address, CPubKey& vchPubKeyOut) const;
     void getOutputs(const std::vector<COutPoint>& vOutpoints, std::vector<COutput>& vOutputs);
     void listCoins(std::map<QString, std::vector<COutput> >& mapCoins) const;
-
     bool isLockedCoin(uint256 hash, unsigned int n) const;
     void lockCoin(COutPoint& output);
     void unlockCoin(COutPoint& output);
     void listLockedCoins(std::vector<COutPoint>& vOutpts);
-    void clearOrphans();
 
 private:
     CWallet *wallet;
+    bool fForceCheckBalanceChanged;
 
     // Wallet has an options model for wallet-specific options
     // (transaction fee, for example)
     OptionsModel *optionsModel;
 
     AddressTableModel *addressTableModel;
-    MintingTableModel *mintingTableModel;
     TransactionTableModel *transactionTableModel;
 
     // Cache some values to be able to detect changes
@@ -146,7 +141,6 @@ private:
     qint64 cachedStake;
     qint64 cachedUnconfirmedBalance;
     qint64 cachedImmatureBalance;
-    qint64 cachedNumTransactions;
     EncryptionStatus cachedEncryptionStatus;
     int cachedNumBlocks;
 
@@ -156,23 +150,6 @@ private:
     void unsubscribeFromCoreSignals();
     void checkBalanceChanged();
 
-signals:
-    // Signal that balance in wallet changed
-    void balanceChanged(qint64 balance, qint64 stake, qint64 unconfirmedBalance, qint64 immatureBalance);
-
-    // Number of transactions in wallet changed
-    void numTransactionsChanged(int count);
-
-    // Encryption status of wallet changed
-    void encryptionStatusChanged(int status);
-
-    // Signal emitted when wallet needs to be unlocked
-    // It is valid behaviour for listeners to keep the wallet locked after this signal;
-    // this means that the unlocking failed or was cancelled.
-    void requireUnlock();
-
-    // Asynchronous message notification
-    void message(const QString &title, const QString &message, unsigned int style);
 
 public slots:
     /* Wallet status might have changed */
@@ -183,6 +160,21 @@ public slots:
     void updateAddressBook(const QString &address, const QString &label, bool isMine, int status);
     /* Current, immature or unconfirmed balance might have changed - emit 'balanceChanged' if so */
     void pollBalanceChanged();
+
+signals:
+    // Signal that balance in wallet changed
+    void balanceChanged(qint64 balance, qint64 stake, qint64 unconfirmedBalance, qint64 immatureBalance);
+
+    // Encryption status of wallet changed
+    void encryptionStatusChanged(int status);
+
+    // Signal emitted when wallet needs to be unlocked
+    // It is valid behaviour for listeners to keep the wallet locked after this signal;
+    // this means that the unlocking failed or was cancelled.
+    void requireUnlock();
+
+    // Asynchronous message notification
+    void message(const QString &title, const QString &message, bool modal, unsigned int style);
 };
 
 #endif // WALLETMODEL_H
