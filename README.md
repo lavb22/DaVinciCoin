@@ -1,3 +1,3 @@
 # DaVinciCoin
 
- - Development staging tree -
+ - Development staging tree
