@@ -1393,7 +1393,7 @@ Value walletpassphrase(const Array& params, bool fHelp)
     if (*pnSleepTime > 2147483647) *pnSleepTime = 2147483647;
     NewThread(ThreadCleanWalletPassphrase, pnSleepTime);
 
-    // ppcoin: if user OS account compromised prevent trivial sendmoney commands
+    // davincicoin: if user OS account compromised prevent trivial sendmoney commands
     if (params.size() > 2)
         fWalletUnlockMintOnly = params[2].get_bool();
     else

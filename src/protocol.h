@@ -15,10 +15,12 @@
 #include <string>
 #include "uint256.h"
 
-#define PPCOIN_PORT  9901
-#define RPC_PORT     9902
-#define TESTNET_PORT 9903
-#define TESTNET_RPC_PORT 9904
+//Davincicoin ports
+
+#define DAVINCICOIN_PORT  10000
+#define RPC_PORT     10001
+#define TESTNET_PORT 10002
+#define TESTNET_RPC_PORT 10003
 
 extern bool fTestNet;
 extern unsigned char pchMessageStart[4];
@@ -27,7 +29,7 @@ void GetMessageStart(unsigned char pchMessageStart[], bool fPersistent = false);
 
 static inline unsigned short GetDefaultPort(const bool testnet = fTestNet)
 {
-    return testnet ? TESTNET_PORT : PPCOIN_PORT;
+    return testnet ? TESTNET_PORT : DAVINCICOIN_PORT;
 }
 
 

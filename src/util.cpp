@@ -1080,35 +1080,6 @@ boost::filesystem::path GetDefaultDataDir()
 #endif
 }
 
-boost::filesystem::path GetOldDefaultDataDir()
-{
-    namespace fs = boost::filesystem;
-    // Windows < Vista: C:\Documents and Settings\Username\Application Data\PPCoin
-    // Windows >= Vista: C:\Users\Username\AppData\Roaming\PPCoin
-    // Mac: ~/Library/Application Support/PPCoin
-    // Unix: ~/.ppcoin
-#ifdef WIN32
-    // Windows
-    return GetSpecialFolderPath(CSIDL_APPDATA) / "PPCoin";
-#else
-    fs::path pathRet;
-    char* pszHome = getenv("HOME");
-    if (pszHome == NULL || strlen(pszHome) == 0)
-        pathRet = fs::path("/");
-    else
-        pathRet = fs::path(pszHome);
-#ifdef MAC_OSX
-    // Mac
-    pathRet /= "Library/Application Support";
-    fs::create_directory(pathRet);
-    return pathRet / "PPCoin";
-#else
-    // Unix
-    return pathRet / ".ppcoin";
-#endif
-#endif
-}
-
 const boost::filesystem::path &GetDataDir(bool fNetSpecific)
 {
     namespace fs = boost::filesystem;
@@ -1133,16 +1104,7 @@ const boost::filesystem::path &GetDataDir(bool fNetSpecific)
         }
     } else {
         const boost::filesystem::path defaultDataDir = GetDefaultDataDir();
-
-        if (fs::is_directory(defaultDataDir))
-            path = defaultDataDir;
-        else {
-            const boost::filesystem::path oldDefaultDataDir = GetOldDefaultDataDir();
-            if (fs::is_directory(oldDefaultDataDir))
-                path = oldDefaultDataDir;
-            else
-                path = defaultDataDir;
-        }
+        path = defaultDataDir;
     }
     if (fNetSpecific && GetBoolArg("-testnet", false))
         path /= "testnet";
@@ -1157,13 +1119,6 @@ boost::filesystem::path GetConfigFile()
 {
     boost::filesystem::path pathConfigFile(GetArg("-conf", "davincicoin.conf"));
     if (!pathConfigFile.is_complete()) pathConfigFile = GetDataDir(false) / pathConfigFile;
-
-    // Load old config file if present
-    if (mapArgs.count("-conf") == 0 && !boost::filesystem::exists(pathConfigFile)) {
-        boost::filesystem::path pathOldConfigFile = GetDataDir(false) / "ppcoin.conf";
-        if (boost::filesystem::exists(pathOldConfigFile))
-            pathConfigFile = pathOldConfigFile;
-    }
 
     return pathConfigFile;
 }

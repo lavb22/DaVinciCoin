@@ -23,7 +23,7 @@
 
 #endif //HAVE_CONFIG_H
 
-// ppcoin version - intended for display purpose ONLY
+// davincicoin version - intended for display purpose ONLY
 #define DAVINCICOIN_VERSION_MAJOR       0
 #define DAVINCICOIN_VERSION_MINOR       1
 #define DAVINCICOIN_VERSION_REVISION    0
