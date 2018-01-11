@@ -2,7 +2,7 @@
 #define CLIENTVERSION_H
 
 #if defined(HAVE_CONFIG_H)
-#include "bitcoin-config.h"
+#include "davincicoin-config.h"
 #else
 //
 // client versioning and copyright year
@@ -24,10 +24,10 @@
 #endif //HAVE_CONFIG_H
 
 // ppcoin version - intended for display purpose ONLY
-#define PEERCOIN_VERSION_MAJOR       0
-#define PEERCOIN_VERSION_MINOR       6
-#define PEERCOIN_VERSION_REVISION    2
-#define PEERCOIN_VERSION_BUILD       0
+#define DAVINCICOIN_VERSION_MAJOR       0
+#define DAVINCICOIN_VERSION_MINOR       1
+#define DAVINCICOIN_VERSION_REVISION    0
+#define DAVINCICOIN_VERSION_BUILD       0
 
 // Copyright year (2009-this)
 // Todo: update this when changing our copyright comments in the source

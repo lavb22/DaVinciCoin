@@ -3,8 +3,8 @@
 // Copyright (c) 2011-2017 The Peercoin developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
-#ifndef BITCOIN_DB_H
-#define BITCOIN_DB_H
+#ifndef DAVINCICOIN_DB_H
+#define DAVINCICOIN_DB_H
 
 #include "main.h"
 
@@ -325,4 +325,4 @@ public:
     bool Read(CAddrMan& addr);
 };
 
-#endif // BITCOIN_DB_H
+#endif // DAVINCICOIN_DB_H

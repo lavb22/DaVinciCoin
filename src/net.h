@@ -3,8 +3,8 @@
 // Copyright (c) 2012-2017 The Peercoin developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
-#ifndef BITCOIN_NET_H
-#define BITCOIN_NET_H
+#ifndef DAVINCICOIN_NET_H
+#define DAVINCICOIN_NET_H
 
 #include <deque>
 #include <boost/array.hpp>

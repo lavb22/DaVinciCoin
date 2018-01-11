@@ -30,8 +30,8 @@
 #include "macdockiconhandler.h"
 #endif
 
-#if defined(BITCOIN_NEED_QT_PLUGINS) && !defined(_BITCOIN_QT_PLUGINS_INCLUDED)
-#define _BITCOIN_QT_PLUGINS_INCLUDED
+#if defined(DAVINCICOIN_NEED_QT_PLUGINS) && !defined(_DAVINCICOIN_QT_PLUGINS_INCLUDED)
+#define _DAVINCICOIN_QT_PLUGINS_INCLUDED
 #define __INSURE__
 #include <QtPlugin>
 Q_IMPORT_PLUGIN(qcncodecs)
@@ -115,7 +115,7 @@ static void handleRunawayException(std::exception *e)
     exit(1);
 }
 
-#ifndef BITCOIN_QT_TEST
+#ifndef DAVINCICOIN_QT_TEST
 int main(int argc, char *argv[])
 {
     // Command-line options take precedence:
@@ -300,4 +300,4 @@ int main(int argc, char *argv[])
     return 0;
 }
 
-#endif // BITCOIN_QT_TEST
+#endif // DAVINCICOIN_QT_TEST

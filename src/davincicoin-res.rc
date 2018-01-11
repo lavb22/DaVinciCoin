@@ -17,14 +17,14 @@ BEGIN
     BEGIN
         BLOCK "040904E4" // U.S. English - multilingual (hex)
         BEGIN
-            VALUE "CompanyName",        "Peercoin"
-            VALUE "FileDescription",    "Peercoind (OSS daemon/client for Peercoin)"
+            VALUE "CompanyName",        "Davinci Codes"
+            VALUE "FileDescription",    "Davincicoind (OSS daemon/client for Davincicoin)"
             VALUE "FileVersion",        VER_FILEVERSION_STR
-            VALUE "InternalName",       "peercoind"
+            VALUE "InternalName",       "Davincicoind"
             VALUE "LegalCopyright",     COPYRIGHT_STR
             VALUE "LegalTrademarks1",   "Distributed under the MIT/X11 software license, see the accompanying file COPYING or http://www.opensource.org/licenses/mit-license.php."
-            VALUE "OriginalFilename",   "peercoind.exe"
-            VALUE "ProductName",        "Peercoind"
+            VALUE "OriginalFilename",   "davincicoind.exe"
+            VALUE "ProductName",        "davincicoind"
             VALUE "ProductVersion",     VER_PRODUCTVERSION_STR
         END
     END

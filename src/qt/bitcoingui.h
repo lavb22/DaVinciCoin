@@ -1,5 +1,5 @@
-#ifndef BITCOINGUI_H
-#define BITCOINGUI_H
+#ifndef DAVINCICOINGUI_H
+#define DAVINCICOINGUI_H
 
 #include <QDesktopServices>
 #include <QMainWindow>
@@ -210,4 +210,4 @@ private slots:
     void detectShutdown();
 };
 
-#endif // BITCOINGUI_H
+#endif // DAVINCICOINGUI_H

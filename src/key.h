@@ -3,8 +3,8 @@
 // Copyright (c) 2011-2017 The Peercoin developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
-#ifndef BITCOIN_KEY_H
-#define BITCOIN_KEY_H
+#ifndef DAVINCICOIN_KEY_H
+#define DAVINCICOIN_KEY_H
 
 #include <stdexcept>
 #include <vector>

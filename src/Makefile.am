@@ -26,27 +26,27 @@ $(LIBLEVELDB) $(LIBMEMENV):
 endif
 
 noinst_LIBRARIES = \
-  libpeercoin_server.a \
-  libpeercoin_common.a \
-  libpeercoin_cli.a
+  libdavincicoin_server.a \
+  libdavincicoin_common.a \
+  libdavincicoin_cli.a
 if ENABLE_WALLET
-noinst_LIBRARIES += libpeercoin_wallet.a
+noinst_LIBRARIES += libdavincicoin_wallet.a
 endif
 
 bin_PROGRAMS =
 TESTS =
 
-if BUILD_BITCOIND
-  bin_PROGRAMS += peercoind
+if BUILD_DAVINCICOIND
+  bin_PROGRAMS += davincicoind
 endif
 
-if BUILD_BITCOIN_CLI
-  bin_PROGRAMS += peercoin-cli
+if BUILD_DAVINCICOIN_CLI
+  bin_PROGRAMS += davincicoin-cli
 endif
 
 .PHONY: FORCE
-# bitcoin core #
-BITCOIN_CORE_H = \
+# davincicoin core #
+DAVINCICOIN_CORE_H = \
   addrman.h \
   alert.h \
   allocators.h \
@@ -104,7 +104,7 @@ obj/build.h: FORCE
 	  $(abs_top_srcdir)
 version.o: obj/build.h
 
-libpeercoin_server_a_SOURCES = \
+libdavincicoin_server_a_SOURCES = \
   addrman.cpp \
   alert.cpp \
   rpcserver.cpp \
@@ -125,9 +125,9 @@ libpeercoin_server_a_SOURCES = \
   rpcserver.cpp \
   txdb.cpp \
   $(JSON_H) \
-  $(BITCOIN_CORE_H)
+  $(DAVINCICOIN_CORE_H)
 
-libpeercoin_wallet_a_SOURCES = \
+libdavincicoin_wallet_a_SOURCES = \
   db.cpp \
   rpcdump.cpp \
   rpcmining.cpp \
@@ -137,9 +137,9 @@ libpeercoin_wallet_a_SOURCES = \
   wallet.cpp \
   walletdb.cpp \
   rpcwallet.cpp \
-  $(BITCOIN_CORE_H)
+  $(DAVINCICOIN_CORE_H)
 
-libpeercoin_common_a_SOURCES = \
+libdavincicoin_common_a_SOURCES = \
   hash.cpp \
   key.cpp \
   netbase.cpp \
@@ -148,43 +148,43 @@ libpeercoin_common_a_SOURCES = \
   sync.cpp \
   util.cpp \
   version.cpp \
-  $(BITCOIN_CORE_H)
+  $(DAVINCICOIN_CORE_H)
 
-libpeercoin_cli_a_SOURCES = \
+libdavincicoin_cli_a_SOURCES = \
   rpcclient.cpp \
-  $(BITCOIN_CORE_H)
+  $(DAVINCICOIN_CORE_H)
 
-nodist_libpeercoin_common_a_SOURCES = $(top_srcdir)/src/obj/build.h
+nodist_libdavincicoin_common_a_SOURCES = $(top_srcdir)/src/obj/build.h
 #
 
-# peercoind binary #
-peercoind_LDADD = \
-  libpeercoin_server.a \
-  libpeercoin_cli.a \
-  libpeercoin_common.a \
+# davincicoind binary #
+davincicoind_LDADD = \
+  libdavincicoin_server.a \
+  libdavincicoin_cli.a \
+  libdavincicoin_common.a \
   $(LIBLEVELDB) \
   $(LIBMEMENV) \
   $(BOOST_LIBS)
 if ENABLE_WALLET
-peercoind_LDADD += libpeercoin_wallet.a
+davincicoind_LDADD += libdavincicoin_wallet.a
 endif
-peercoind_SOURCES = bitcoind.cpp
-peercoind_LDFLAGS = $(AM_LDFLAGS)
+davincicoind_SOURCES = davincicoind.cpp
+davincicoind_LDFLAGS = $(AM_LDFLAGS)
 
 if TARGET_WINDOWS
-peercoind_SOURCES += bitcoind-res.rc
+davincicoind_SOURCES += davincicoind-res.rc
 endif
 
 AM_CPPFLAGS += $(BDB_CPPFLAGS)
-peercoind_LDADD += $(BDB_LIBS)
+davincicoind_LDADD += $(BDB_LIBS)
 
-# bitcoin-cli binary #
-peercoin_cli_LDADD = libpeercoin_cli.a libpeercoin_common.a $(BOOST_LIBS)
-peercoin_cli_SOURCES = bitcoin-cli.cpp
-peercoin_cli_LDFLAGS = $(AM_LDFLAGS)
+# davincicoin-cli binary #
+davincicoin_cli_LDADD = libdavincicoin_cli.a libdavincicoin_common.a $(BOOST_LIBS)
+davincicoin_cli_SOURCES = davincicoin-cli.cpp
+davincicoin_cli_LDFLAGS = $(AM_LDFLAGS)
 
 if TARGET_WINDOWS
-peercoin_cli_SOURCES += bitcoin-cli-res.rc
+davincicoin_cli_SOURCES += davincicoin-cli-res.rc
 endif
 
 CLEANFILES = leveldb/libleveldb.a leveldb/libmemenv.a *.gcda *.gcno
@@ -205,11 +205,11 @@ clean-local:
 	$(OBJC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	  $(CPPFLAGS) $(AM_CXXFLAGS) $(QT_INCLUDES) $(CXXFLAGS)  -c -o $@ $<
 
-LIBPEERCOIN_SERVER=libpeercoin_server.a
-LIBPEERCOIN_WALLET=libpeercoin_wallet.a
-LIBPEERCOIN_COMMON=libpeercoin_common.a
-LIBPEERCOIN_CLI=libpeercoin_cli.a
-LIBPEERCOINQT=qt/libpeercoinqt.a
+LIBDAVINCICOIN_SERVER=libdavincicoin_server.a
+LIBDAVINCICOIN_WALLET=libdavincicoin_wallet.a
+LIBDAVINCICOIN_COMMON=libdavincicoin_common.a
+LIBDAVINCICOIN_CLI=libdavincicoin_cli.a
+LIBDAVINCICOINQT=qt/libdavincicoinqt.a
 
 if ENABLE_TESTS
 include Makefile.test.include

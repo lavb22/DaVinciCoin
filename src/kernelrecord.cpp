@@ -42,8 +42,8 @@ vector<KernelRecord> KernelRecord::decomposeOutput(const CWallet *wallet, const 
 
                 if (ExtractDestination(txOut.scriptPubKey, address))
                 {
-                    // Sent to Bitcoin Address
-                    addrStr = CBitcoinAddress(address).ToString();
+                    // Sent to Davincicoin Address
+                    addrStr = CDavinciAddress(address).ToString();
                 }
                 else
                 {

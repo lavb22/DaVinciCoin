@@ -3,11 +3,11 @@
 // Copyright (c) 2011-2017 The Peercoin developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
-#ifndef BITCOIN_MAIN_H
-#define BITCOIN_MAIN_H
+#ifndef DAVINCICOIN_MAIN_H
+#define DAVINCICOIN_MAIN_H
 
 #if defined(HAVE_CONFIG_H)
-#include "bitcoin-config.h"
+#include "davincicoin-config.h"
 #endif
 
 #include "bignum.h"
@@ -182,7 +182,7 @@ bool SendMessages(CNode* pto, bool fSendTrickle);
 /** Run an instance of the script checking thread */
 void ThreadScriptCheck();
 /** Run the miner threads */
-void GenerateBitcoins(bool fGenerate, CWallet* pwallet);
+void GenerateDavincicoins(bool fGenerate, CWallet* pwallet);
 /** Run the stake minter thread */
 void MintStake(boost::thread_group& threadGroup, CWallet* pwallet);
 /** Generate a new block, without valid proof-of-work */
@@ -208,9 +208,9 @@ std::string GetWarnings(std::string strFor);
 uint256 WantedByOrphan(const CBlock* pblockOrphan);
 const CBlockIndex* GetLastBlockIndex(const CBlockIndex* pindex, bool fProofOfStake);
 #ifdef TESTING
-void BitcoinMiner(CWallet *pwallet, bool fProofOfStake, bool fGenerateSingleBlock = false);
+void DavincicoinMiner(CWallet *pwallet, bool fProofOfStake, bool fGenerateSingleBlock = false);
 #else
-void BitcoinMiner(CWallet *pwallet, bool fProofOfStake);
+void DavincicoinMiner(CWallet *pwallet, bool fProofOfStake);
 #endif
 /** Retrieve a transaction (from memory pool, or from disk, if possible) */
 bool GetTransaction(const uint256 &hash, CTransaction &tx, uint256 &hashBlock, bool fAllowSlow = false);

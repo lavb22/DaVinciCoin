@@ -163,7 +163,7 @@ Value getblock(const Array& params, bool fHelp)
     if (fHelp || params.size() < 1 || params.size() > 3)
         throw runtime_error(
             "getblock <hash> [verbose] [txinfo]\n"
-            "verbose optional (default true) if false output hash like bitcoin-cli\n"
+            "verbose optional (default true) if false output hash like davincicoin-cli\n"
             "txinfo optional to print more detailed tx info\n"
             "Returns details of a block with given block-hash.");
 

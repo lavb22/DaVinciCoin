@@ -74,7 +74,7 @@ map<uint256, set<uint256> > mapOrphanTransactionsByPrev;
 // Constant stuff for coinbase transactions we create:
 CScript COINBASE_FLAGS;
 
-const string strMessageMagic = "Peercoin Signed Message:\n";
+const string strMessageMagic = "Davincicoin Signed Message:\n";
 
 double dHashesPerSec = 0.0;
 int64 nHPSTimerStart = 0;
@@ -1699,7 +1699,7 @@ bool FindUndoPos(CValidationState &state, int nFile, CDiskBlockPos &pos, unsigne
 static CCheckQueue<CScriptCheck> scriptcheckqueue(128);
 
 void ThreadScriptCheck() {
-    RenameThread("bitcoin-scriptch");
+    RenameThread("davincicoin-scriptch");
     scriptcheckqueue.Thread();
 }
 
@@ -3236,7 +3236,7 @@ bool LoadBlockIndex()
     }
 
     printf("%s Network: genesis=0x%s nBitsLimit=0x%08x nBitsInitial=0x%08x nStakeMinAge=%d nCoinbaseMaturity=%d nModifierInterval=%d\n",
-           fTestNet? "Test" : "Peercoin", hashGenesisBlock.ToString().substr(0, 20).c_str(), bnProofOfWorkLimit.GetCompact(), bnInitialHashTarget.GetCompact(), nStakeMinAge, nCoinbaseMaturity, nModifierInterval);
+           fTestNet? "Test" : "Davincicoin", hashGenesisBlock.ToString().substr(0, 20).c_str(), bnProofOfWorkLimit.GetCompact(), bnInitialHashTarget.GetCompact(), nStakeMinAge, nCoinbaseMaturity, nModifierInterval);
 
     //
     // Load block index from databases
@@ -5177,10 +5177,10 @@ bool CheckWork(CBlock* pblock, CWallet& wallet, CReserveKey& reservekey)
     uint256 hashTarget = CBigNum().SetCompact(pblock->nBits).getuint256();
 
     if (hash > hashTarget && pblock->IsProofOfWork())
-        return error("PeercoinMiner : proof-of-work not meeting target");
+        return error("DavincicoinMiner : proof-of-work not meeting target");
 
     //// debug print
-    printf("PeercoinMiner:\n");
+    printf("DavincicoinMiner:\n");
     printf("new block found  \n  hash: %s  \ntarget: %s\n", hash.GetHex().c_str(), hashTarget.GetHex().c_str());
     pblock->print();
     printf("generated %s\n", FormatMoney(pblock->vtx[0].vout[0].nValue).c_str());
@@ -5189,7 +5189,7 @@ bool CheckWork(CBlock* pblock, CWallet& wallet, CReserveKey& reservekey)
     {
         LOCK(cs_main);
         if (pblock->hashPrevBlock != hashBestChain)
-            return error("PeercoinMiner : generated block is stale");
+            return error("DavincicoinMiner : generated block is stale");
 
         // Remove key from key pool
         reservekey.KeepKey();
@@ -5203,16 +5203,16 @@ bool CheckWork(CBlock* pblock, CWallet& wallet, CReserveKey& reservekey)
         // Process this block the same as if we had received it from another node
         CValidationState state;
         if (!ProcessBlock(state, NULL, pblock))
-            return error("PeercoinMiner : ProcessBlock, block not accepted");
+            return error("DavincicoinMiner : ProcessBlock, block not accepted");
     }
 
     return true;
 }
 
 #ifdef TESTING
-void BitcoinMiner(CWallet *pwallet, bool fProofOfStake, bool fGenerateSingleBlock)
+void DavincicoinMiner(CWallet *pwallet, bool fProofOfStake, bool fGenerateSingleBlock)
 #else
-void BitcoinMiner(CWallet *pwallet, bool fProofOfStake)
+void DavincicoinMiner(CWallet *pwallet, bool fProofOfStake)
 #endif
 {
     printf("CPUMiner started for proof-of-%s\n", fProofOfStake? "stake" : "work");
@@ -5292,7 +5292,7 @@ void BitcoinMiner(CWallet *pwallet, bool fProofOfStake)
             continue;
         }
 
-        printf("Running PeercoinMiner with %" PRIszu" transactions in block (%u bytes)\n", pblock->vtx.size(),
+        printf("Running DavincicoinMiner with %" PRIszu" transactions in block (%u bytes)\n", pblock->vtx.size(),
                ::GetSerializeSize(*pblock, SER_NETWORK, PROTOCOL_VERSION));
 
         //
@@ -5399,12 +5399,12 @@ void BitcoinMiner(CWallet *pwallet, bool fProofOfStake)
     } }
     catch (boost::thread_interrupted)
     {
-        if(!fProofOfStake) printf("PeercoinMiner terminated\n");
+        if(!fProofOfStake) printf("DavincicoinMiner terminated\n");
         throw;
     }
 }
 
-void GenerateBitcoins(bool fGenerate, CWallet* pwallet)
+void GenerateDavincicoins(bool fGenerate, CWallet* pwallet)
 {
     static boost::thread_group* minerThreads = NULL;
 
@@ -5425,9 +5425,9 @@ void GenerateBitcoins(bool fGenerate, CWallet* pwallet)
     minerThreads = new boost::thread_group();
     for (int i = 0; i < nThreads; i++)
 #ifdef TESTING
-        minerThreads->create_thread(boost::bind(&BitcoinMiner, pwallet, false, false));
+        minerThreads->create_thread(boost::bind(&DavincicoinMiner, pwallet, false, false));
 #else
-        minerThreads->create_thread(boost::bind(&BitcoinMiner, pwallet, false));
+        minerThreads->create_thread(boost::bind(&DavincicoinMiner, pwallet, false));
 #endif
 }
 
@@ -5438,7 +5438,7 @@ void static ThreadStakeMinter(void* parg)
     CWallet* pwallet = (CWallet*)parg;
     try
     {
-        BitcoinMiner(pwallet, true);
+        DavincicoinMiner(pwallet, true);
     }
     catch (boost::thread_interrupted) {
         printf("stakeminter thread interrupt\n");

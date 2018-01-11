@@ -236,7 +236,7 @@ Value makekeypair(const Array& params, bool fHelp)
     result.push_back(Pair("PublicKey", HexStr(key.GetPubKey().Raw())));
     bool fCompressed;
     CSecret vchSecret = key.GetSecret(fCompressed);
-    result.push_back(Pair("PrivateKey", CBitcoinSecret(vchSecret, fCompressed).ToString()));
+    result.push_back(Pair("PrivateKey", CDavincicoinSecret(vchSecret, fCompressed).ToString()));
     CPrivKey vchPrivKey = key.GetPrivKey();
     result.push_back(Pair("PrivateKeyHex", HexStr<CPrivKey::iterator>(vchPrivKey.begin(), vchPrivKey.end())));
     return result;
@@ -269,7 +269,7 @@ Value showkeypair(const Array& params, bool fHelp)
     result.push_back(Pair("PublicKey", HexStr(key.GetPubKey().Raw())));
     bool fCompressed;
     CSecret vchSecret = key.GetSecret(fCompressed);
-    result.push_back(Pair("PrivateKey", CBitcoinSecret(vchSecret, fCompressed).ToString()));
+    result.push_back(Pair("PrivateKey", CDavincicoinSecret(vchSecret, fCompressed).ToString()));
     result.push_back(Pair("PrivateKeyHex", strPrivKey));
     return result;
 }

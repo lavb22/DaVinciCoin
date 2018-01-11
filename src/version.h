@@ -2,8 +2,8 @@
 // Copyright (c) 2012-2017 The Peercoin developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
-#ifndef BITCOIN_VERSION_H
-#define BITCOIN_VERSION_H
+#ifndef DAVINCICOIN_VERSION_H
+#define DAVINCICOIN_VERSION_H
 
 #include "clientversion.h"
 #include <string>
@@ -22,11 +22,11 @@ extern const std::string CLIENT_NAME;
 extern const std::string CLIENT_BUILD;
 extern const std::string CLIENT_DATE;
 
-static const int PEERCOIN_VERSION =
-                           1000000 * PEERCOIN_VERSION_MAJOR
-                         +   10000 * PEERCOIN_VERSION_MINOR
-                         +     100 * PEERCOIN_VERSION_REVISION
-                         +       1 * PEERCOIN_VERSION_BUILD;
+static const int DAVINCICOIN_VERSION =
+                           1000000 * DAVINCICOIN_VERSION_MAJOR
+                         +   10000 * DAVINCICOIN_VERSION_MINOR
+                         +     100 * DAVINCICOIN_VERSION_REVISION
+                         +       1 * DAVINCICOIN_VERSION_BUILD;
 
 //
 // network protocol versioning
