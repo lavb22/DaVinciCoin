@@ -1,4 +1,4 @@
 *.sh     -crlf
 *.ac     -crlf
 *.am     -crlf
-/src/leveldb/*.* -crlf
+/src/*.* -crlf
