@@ -211,14 +211,16 @@ LIBDAVINCICOIN_COMMON=libdavincicoin_common.a
 LIBDAVINCICOIN_CLI=libdavincicoin_cli.a
 LIBDAVINCICOINQT=qt/libdavincicoinqt.a
 
-if ENABLE_TESTS
-include Makefile.test.include
-endif
 
-if ENABLE_QT
-include Makefile.qt.include
-endif
+#Disable for development state
+#if ENABLE_TESTS
+#include Makefile.test.include
+#endif
 
-if ENABLE_QT_TESTS
-include Makefile.qttest.include
-endif
+#if ENABLE_QT
+#include Makefile.qt.include
+#endif
+
+#if ENABLE_QT_TESTS
+#include Makefile.qttest.include
+#endif
