@@ -6,14 +6,14 @@ define(_CLIENT_VERSION_REVISION, 0)
 define(_CLIENT_VERSION_BUILD, 0)
 define(_CLIENT_VERSION_IS_RELEASE, false)
 define(_COPYRIGHT_YEAR, 2017)
-AC_INIT([Peercoin],[_CLIENT_VERSION_MAJOR._CLIENT_VERSION_MINOR._CLIENT_VERSION_REVISION],[info@peercoin.net],[peercoin])
+AC_INIT([Davincicoin],[_CLIENT_VERSION_MAJOR._CLIENT_VERSION_MINOR._CLIENT_VERSION_REVISION],[info@davincicoin.net],[davincicoin])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([build-aux/m4])
 LT_INIT([disable-shared])
 AC_CANONICAL_HOST
-AH_TOP([#ifndef BITCOIN_CONFIG_H])
-AH_TOP([#define BITCOIN_CONFIG_H])
-AH_BOTTOM([#endif //BITCOIN_CONFIG_H])
+AH_TOP([#ifndef DAVINCICOIN_CONFIG_H])
+AH_TOP([#define DAVINCICOIN_CONFIG_H])
+AH_BOTTOM([#endif //DAVINCICOIN_CONFIG_H])
 
 # This m4 will only be used if a system copy cannot be found. This is helpful
 # on systems where autotools are installed but the pkg-config macros are not in
@@ -130,7 +130,7 @@ AC_ARG_WITH([protoc-bindir],[AS_HELP_STRING([--with-protoc-bindir=BIN_DIR],[spec
 
 
 AC_CONFIG_SRCDIR([src])
-AC_CONFIG_HEADERS([src/bitcoin-config.h])
+AC_CONFIG_HEADERS([src/davincicoin-config.h])
 
 dnl Checks for programs.
 AC_PROG_CXX
@@ -299,7 +299,7 @@ dnl Check for pthread compile/link requirements
 AX_PTHREAD
 INCLUDES="$INCLUDES $PTHREAD_CFLAGS"
 
-# The following macro will add the necessary defines to bitcoin-config.h, but
+# The following macro will add the necessary defines to davincicoin-config.h, but
 # they also need to be passed down to any subprojects. Pull the results out of
 # the cache and add them to CPPFLAGS.
 AC_SYS_LARGEFILE
@@ -462,8 +462,8 @@ if test x$boost_sleep != xyes; then
   AC_MSG_ERROR(No working boost sleep implementation found)
 fi
 
-build_bitcoind=yes
-build_bitcoin_cli=yes
+build_davincicoind=yes
+build_davincicoin_cli=yes
 BITCOIN_QT_INIT
 
 if test x$use_pkgconfig = xyes; then
@@ -496,15 +496,15 @@ else
   fi
 fi
 
-AC_MSG_CHECKING([if bitcoind should be enabled])
-AM_CONDITIONAL([BUILD_BITCOIND], [test x$build_bitcoind = xyes])
-AC_MSG_RESULT($build_bitcoind)
+AC_MSG_CHECKING([if davincicoind should be enabled])
+AM_CONDITIONAL([BUILD_DAVINCICOIND], [test x$build_davincicoind = xyes])
+AC_MSG_RESULT($build_davincicoind)
 
-AC_MSG_CHECKING([if bitcoin-cli should be enabled])
-AM_CONDITIONAL([BUILD_BITCOIN_CLI], [test x$build_bitcoin_cli = xyes])
-AC_MSG_RESULT($build_bitcoin_cli)
+AC_MSG_CHECKING([if davincicoin-cli should be enabled])
+AM_CONDITIONAL([BUILD_DAVINCICOIN_CLI], [test x$build_davincicoin_cli = xyes])
+AC_MSG_RESULT($build_davincicoin_cli)
 
-dnl sets $bitcoin_enable_qt, $bitcoin_enable_qt_test, $bitcoin_enable_qt_dbus
+dnl sets $davincicoin_enable_qt, $bitcoin_enable_qt_test, $bitcoin_enable_qt_dbus
 BITCOIN_QT_CONFIGURE([$use_pkgconfig], [qt5])
 
 if test x$use_ipv6 = xyes; then

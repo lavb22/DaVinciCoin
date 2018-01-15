@@ -4,9 +4,9 @@ SUBDIRS = src
 
 GZIP_ENV="-9n"
 
-BITCOIND_BIN=$(top_builddir)/src/peercoind$(EXEEXT)
+DAVINCICOIND_BIN=$(top_builddir)/src/davincicoind$(EXEEXT)
 BITCOIN_QT_BIN=$(top_builddir)/src/qt/peercoin-qt$(EXEEXT)
-BITCOIN_WIN_INSTALLER=$(PACKAGE)-$(PACKAGE_VERSION)-win32-setup$(EXEEXT)
+DAVINCICOIN_WIN_INSTALLER=$(PACKAGE)-$(PACKAGE_VERSION)-win32-setup$(EXEEXT)
 
 OSX_APP=Peercoin-Qt.app
 OSX_DMG=Peercoin-Qt.dmg
@@ -44,16 +44,16 @@ distcheck-hook:
 distcleancheck:
 	@:
 
-$(BITCOIN_WIN_INSTALLER): all-recursive
+$(DAVINCICOIN_WIN_INSTALLER): all-recursive
 	$(MKDIR_P) $(top_builddir)/release
-	STRIPPROG="$(STRIP)" $(INSTALL_STRIP_PROGRAM) $(BITCOIND_BIN) $(top_builddir)/release
+	STRIPPROG="$(STRIP)" $(INSTALL_STRIP_PROGRAM) $(DAVINCICOIND_BIN) $(top_builddir)/release
 	STRIPPROG="$(STRIP)" $(INSTALL_STRIP_PROGRAM) $(BITCOIN_QT_BIN) $(top_builddir)/release
 	STRIPPROG="$(STRIP)" $(INSTALL_STRIP_PROGRAM) $(BITCOIN_CLI_BIN) $(top_builddir)/release
 	@test -f $(MAKENSIS) && $(MAKENSIS) $(top_builddir)/share/setup.nsi || \
 	  echo error: could not build $@
 
-$(BITCOIND_BIN):
-	make -C $(top_srcdir)/src peercoind$(EXEEXT)
+$(DAVINCICOIND_BIN):
+	make -C $(top_srcdir)/src davincoind$(EXEEXT)
 
 $(BITCOIN_QT_BIN):
 	make -C $(top_srcdir)/src/qt peercoin-qt$(EXEEXT)
@@ -117,7 +117,7 @@ if TARGET_DARWIN
 deploy: $(OSX_DMG)
 endif
 if TARGET_WINDOWS
-deploy: $(BITCOIN_WIN_INSTALLER)
+deploy: $(DAVINCICOIN_WIN_INSTALLER)
 endif
 
 if USE_LCOV
@@ -180,7 +180,7 @@ endif
 
 EXTRA_DIST = $(top_srcdir)/share/genbuild.sh qa/pull-tester/pull-tester.sh $(WINDOWS_PACKAGING) $(OSX_PACKAGING)
 
-CLEANFILES = $(OSX_DMG) $(BITCOIN_WIN_INSTALLER)
+CLEANFILES = $(OSX_DMG) $(DAVINCICOIN_WIN_INSTALLER)
 
 .INTERMEDIATE: $(OSX_APP_BUILT) $(COVERAGE_INFO)
 
