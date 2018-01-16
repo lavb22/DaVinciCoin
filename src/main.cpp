@@ -3255,7 +3255,11 @@ bool InitBlockIndex() {
         txNew.vin.resize(1);
         txNew.vout.resize(1);
         txNew.vin[0].scriptSig = CScript() << 486604799 << CBigNum(9999) << vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));
-        txNew.vout[0].SetEmpty();//Modify this to assign coins to an specific address with a value
+        txNew.vout[0].SetEmpty(); //Modify this to assign coins to an specific address with a value
+        txNew.vout[0].nValue = 7500000 * COIN;
+        CPubKey pubkeyGenesis;
+        pubkeyGenesis(ParseHex("04171414f9c1c79b62df77ce9c43529446f527316a90418e88b6e6709caea671a203fe114fd29ce674cdbf2d43126a53fde53a831c5fe97ed53cd94a9a394a1ff7"));
+        txNew.vout[0].scriptPubKey << pubkeyGenesis << OP_CHECKSIG;
         CBlock block;
         block.vtx.push_back(txNew);
         block.hashPrevBlock = 0;
@@ -3270,7 +3274,7 @@ bool InitBlockIndex() {
         if (fTestNet)
         {
             block.nTime    = 1516108500; //2018-01-16 13:15
-            block.nNonce   = 252212910;
+            block.nNonce   = 0;
         }
 
 #ifdef TESTING
@@ -3287,7 +3291,7 @@ bool InitBlockIndex() {
 
          	 //uncomment to log genesis block info
               //  start
-                if (false && block.GetHash() != hashGenesisBlock)
+                if (true && block.GetHash() != hashGenesisBlock)
                                {
                                    printf("Searching for genesis block...\n");
                                    uint256 hashTarget = CBigNum().SetCompact(block.nBits).getuint256();
