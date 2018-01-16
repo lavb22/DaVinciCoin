@@ -7,7 +7,7 @@
  # Reference Features: 
  
 - Ammount of avaliable coins: 10 millions.
-- Pre-Minted: 7.5 millions.
+- Pre-Minted: 7.5 millions on Genesis Block.
 - Proof of Steak.
 - Looking for the one who won the PoS block.
 - Max award of 1000 and minumum of 500.
