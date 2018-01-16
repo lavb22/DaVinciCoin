@@ -1,0 +1,147 @@
+2018-01-16 01:01:25 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2018-01-16 01:01:25 Davincicoin version v0.1.0.0-gc03aa94434c2 (2018-01-15 20:09:35 -0400)
+2018-01-16 01:01:25 Using OpenSSL version OpenSSL 1.0.2g  1 Mar 2016
+2018-01-16 01:01:25 Default data directory /home/lvalles/.davincicoin
+2018-01-16 01:01:25 Using data directory /home/lvalles/.davincicoin
+2018-01-16 01:01:25 Using at most 125 connections (1024 file descriptors available)
+2018-01-16 01:01:25 init message: Verifying wallet...
+2018-01-16 01:01:25 dbenv.open LogDir=/home/lvalles/.davincicoin/database ErrorFile=/home/lvalles/.davincicoin/db.log
+2018-01-16 01:01:25 Bound to [::]:10000
+2018-01-16 01:01:25 Bound to 0.0.0.0:10000
+2018-01-16 01:01:25 init message: Loading block index...
+2018-01-16 01:01:25 Opening LevelDB in /home/lvalles/.davincicoin/blocks/index
+2018-01-16 01:01:25 Opened LevelDB successfully
+2018-01-16 01:01:25 Opening LevelDB in /home/lvalles/.davincicoin/chainstate
+2018-01-16 01:01:25 Opened LevelDB successfully
+2018-01-16 01:01:25 Davincicoin Network: genesis=0x0000000032fe677166d5 nBitsLimit=0x1d00ffff nBitsInitial=0x1c00ffff nStakeMinAge=2592000 nCoinbaseMaturity=100 nModifierInterval=21600
+2018-01-16 01:01:25 LoadBlockIndexDB(): last block file = 0
+2018-01-16 01:01:25 LoadBlockIndexDB(): synchronized checkpoint not read
+2018-01-16 01:01:25 LoadBlockIndexDB(): synchronized checkpoint 0000000032fe677166d54963b62a4677d8957e87c508eaa4fd7eb1c880cd27e3
+2018-01-16 01:01:25 LoadBlockIndexDB(): transaction index disabled
+2018-01-16 01:01:25 Initializing databases...
+2018-01-16 01:01:25 fbb7084274bd5bc799dd85afa529c214a60362013d921680d7c036d7882ab68e
+2018-01-16 01:01:25 0000000032fe677166d54963b62a4677d8957e87c508eaa4fd7eb1c880cd27e3
+2018-01-16 01:01:25 792f19513d155823128a62c8396d8469b30ab21e888c5e70d1c1a427a219757f
+2018-01-16 01:17:22 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2018-01-16 01:17:22 Davincicoin version v0.1.0.0-gc03aa94434c2 (2018-01-15 20:09:35 -0400)
+2018-01-16 01:17:22 Using OpenSSL version OpenSSL 1.0.2g  1 Mar 2016
+2018-01-16 01:17:22 Default data directory /home/lvalles/.davincicoin
+2018-01-16 01:17:22 Using data directory /home/lvalles/.davincicoin
+2018-01-16 01:17:22 Using at most 125 connections (1024 file descriptors available)
+2018-01-16 01:17:22 init message: Verifying wallet...
+2018-01-16 01:17:22 dbenv.open LogDir=/home/lvalles/.davincicoin/database ErrorFile=/home/lvalles/.davincicoin/db.log
+2018-01-16 01:17:22 Bound to [::]:10000
+2018-01-16 01:17:22 Bound to 0.0.0.0:10000
+2018-01-16 01:17:22 init message: Loading block index...
+2018-01-16 01:17:22 Opening LevelDB in /home/lvalles/.davincicoin/blocks/index
+2018-01-16 01:17:22 Opened LevelDB successfully
+2018-01-16 01:17:22 Opening LevelDB in /home/lvalles/.davincicoin/chainstate
+2018-01-16 01:17:22 Opened LevelDB successfully
+2018-01-16 01:17:22 Davincicoin Network: genesis=0xfbb7084274bd5bc799dd nBitsLimit=0x1d00ffff nBitsInitial=0x1c00ffff nStakeMinAge=2592000 nCoinbaseMaturity=100 nModifierInterval=21600
+2018-01-16 01:17:22 LoadBlockIndexDB(): last block file = 0
+2018-01-16 01:17:22 LoadBlockIndexDB(): synchronized checkpoint not read
+2018-01-16 01:17:22 LoadBlockIndexDB(): synchronized checkpoint fbb7084274bd5bc799dd85afa529c214a60362013d921680d7c036d7882ab68e
+2018-01-16 01:17:22 LoadBlockIndexDB(): transaction index enabled
+2018-01-16 01:17:22 Initializing databases...
+2018-01-16 01:17:22 fbb7084274bd5bc799dd85afa529c214a60362013d921680d7c036d7882ab68e
+2018-01-16 01:17:22 fbb7084274bd5bc799dd85afa529c214a60362013d921680d7c036d7882ab68e
+2018-01-16 01:17:22 792f19513d155823128a62c8396d8469b30ab21e888c5e70d1c1a427a219757f
+2018-01-16 01:17:22 CBlock(hash=fbb7084274bd5bc799dd85afa529c214a60362013d921680d7c036d7882ab68e, ver=1, hashPrevBlock=0000000000000000000000000000000000000000000000000000000000000000, hashMerkleRoot=792f19513d155823128a62c8396d8469b30ab21e888c5e70d1c1a427a219757f, nTime=1515999600, nBits=1d00ffff, nNonce=2179302059, vtx=1, vchBlockSig=)
+2018-01-16 01:17:22   Coinbase(hash=792f19513d155823128a62c8396d8469b30ab21e888c5e70d1c1a427a219757f, nTime=1345083810, ver=1, vin.size=1, vout.size=1, nLockTime=0)
+    CTxIn(COutPoint(0000000000000000000000000000000000000000000000000000000000000000, 4294967295), coinbase 04ffff001d020f272754686973206973207468652067656e6573697320626c6f636b2e20446176696e6369636f696e73)
+    CTxOut(empty)
+  vMerkleTree: 792f19513d155823128a62c8396d8469b30ab21e888c5e70d1c1a427a219757f 
+2018-01-16 01:17:22 ERROR: CheckProofOfWork() : hash doesn't match nBits
+2018-01-16 01:17:22 ERROR: CheckBlock() : proof of work failed
+2018-01-16 01:17:22 ERROR: CheckProofOfWork() : hash doesn't match nBits
+2018-01-16 01:17:22 ERROR: CheckBlock() : proof of work failed
+2018-01-16 01:19:55 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2018-01-16 01:19:55 Davincicoin version v0.1.0.0-gc03aa94434c2 (2018-01-15 20:09:35 -0400)
+2018-01-16 01:19:55 Using OpenSSL version OpenSSL 1.0.2g  1 Mar 2016
+2018-01-16 01:19:55 Default data directory /home/lvalles/.davincicoin
+2018-01-16 01:19:55 Using data directory /home/lvalles/.davincicoin
+2018-01-16 01:19:55 Using at most 125 connections (1024 file descriptors available)
+2018-01-16 01:19:55 init message: Verifying wallet...
+2018-01-16 01:19:55 dbenv.open LogDir=/home/lvalles/.davincicoin/database ErrorFile=/home/lvalles/.davincicoin/db.log
+2018-01-16 01:19:55 Bound to [::]:10000
+2018-01-16 01:19:55 Bound to 0.0.0.0:10000
+2018-01-16 01:19:55 init message: Loading block index...
+2018-01-16 01:19:55 Opening LevelDB in /home/lvalles/.davincicoin/blocks/index
+2018-01-16 01:19:55 Opened LevelDB successfully
+2018-01-16 01:19:55 Opening LevelDB in /home/lvalles/.davincicoin/chainstate
+2018-01-16 01:19:55 Opened LevelDB successfully
+2018-01-16 01:19:55 Davincicoin Network: genesis=0xfbb7084274bd5bc799dd nBitsLimit=0x1d00ffff nBitsInitial=0x1c00ffff nStakeMinAge=2592000 nCoinbaseMaturity=100 nModifierInterval=21600
+2018-01-16 01:19:55 LoadBlockIndexDB(): last block file = 0
+2018-01-16 01:19:55 LoadBlockIndexDB(): synchronized checkpoint not read
+2018-01-16 01:19:55 LoadBlockIndexDB(): synchronized checkpoint fbb7084274bd5bc799dd85afa529c214a60362013d921680d7c036d7882ab68e
+2018-01-16 01:19:55 LoadBlockIndexDB(): transaction index enabled
+2018-01-16 01:19:55 Initializing databases...
+2018-01-16 01:19:55 fbb7084274bd5bc799dd85afa529c214a60362013d921680d7c036d7882ab68e
+2018-01-16 01:19:55 fbb7084274bd5bc799dd85afa529c214a60362013d921680d7c036d7882ab68e
+2018-01-16 01:19:55 792f19513d155823128a62c8396d8469b30ab21e888c5e70d1c1a427a219757f
+2018-01-16 01:19:55 CBlock(hash=fbb7084274bd5bc799dd85afa529c214a60362013d921680d7c036d7882ab68e, ver=1, hashPrevBlock=0000000000000000000000000000000000000000000000000000000000000000, hashMerkleRoot=792f19513d155823128a62c8396d8469b30ab21e888c5e70d1c1a427a219757f, nTime=1515999600, nBits=1d00ffff, nNonce=2179302059, vtx=1, vchBlockSig=)
+2018-01-16 01:19:55   Coinbase(hash=792f19513d155823128a62c8396d8469b30ab21e888c5e70d1c1a427a219757f, nTime=1345083810, ver=1, vin.size=1, vout.size=1, nLockTime=0)
+    CTxIn(COutPoint(0000000000000000000000000000000000000000000000000000000000000000, 4294967295), coinbase 04ffff001d020f272754686973206973207468652067656e6573697320626c6f636b2e20446176696e6369636f696e73)
+    CTxOut(empty)
+  vMerkleTree: 792f19513d155823128a62c8396d8469b30ab21e888c5e70d1c1a427a219757f 
+2018-01-16 01:19:55 ERROR: CheckProofOfWork() : hash doesn't match nBits
+2018-01-16 01:19:55 ERROR: CheckBlock() : proof of work failed
+2018-01-16 01:19:55 ERROR: CheckProofOfWork() : hash doesn't match nBits
+2018-01-16 01:19:55 ERROR: CheckBlock() : proof of work failed
