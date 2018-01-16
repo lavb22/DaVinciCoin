@@ -3290,7 +3290,7 @@ bool InitBlockIndex() {
             block.nNonce   = 122894938;
         }
 
-#ifdef TESTING
+//#ifdef TESTING
         CBigNum bnTarget;
         bnTarget.SetCompact(block.nBits);
         while (block.GetHash() > bnTarget.getuint256())
@@ -3300,7 +3300,39 @@ bool InitBlockIndex() {
                        block.GetHash().ToString().c_str());
             block.nNonce++;
         }
-#endif
+//#endif
+
+//         	 //uncomment to log genesis block info
+//              //  start
+//                if (true && block.GetHash() != hashGenesisBlock)
+//                               {
+//                                   printf("Searching for genesis block...\n");
+//                                   uint256 hashTarget = CBigNum().SetCompact(block.nBits).getuint256();
+//                                   uint256 thash;
+//
+//                                   while (true)
+//                                   {
+//                                       thash = block.GetHash();
+//                                       if (thash <= hashTarget)
+//                                           break;
+//                                       if ((block.nNonce & 0xFFF) == 0)
+//                                       {
+//                                           printf("nonce %08X: hash = %s (target = %s)\n", block.nNonce, thash.ToString().c_str(), hashTarget.ToString().c_str());
+//                                       }
+//                                       ++block.nNonce;
+//                                       if (block.nNonce == 0)
+//                                       {
+//                                           printf("NONCE WRAPPED, incrementing time\n");
+//                                           ++block.nTime;
+//                                       }
+//                                   }
+//                                   printf("genesis.nTime = %u \n", block.nTime);
+//                                   printf("genesis.nNonce = %u \n", block.nNonce);
+//                                   printf("genesis.nVersion = %u \n", block.nVersion);
+//                               }
+//
+//                //end
+
 
         //// debug print
         uint256 hash = block.GetHash();
