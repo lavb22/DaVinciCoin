@@ -3270,7 +3270,7 @@ bool InitBlockIndex() {
         if (fTestNet)
         {
             block.nTime    = 1516108500; //2018-01-16 13:15
-            block.nNonce   = 0;
+            block.nNonce   = 252212910;
         }
 
 #ifdef TESTING
@@ -3287,7 +3287,7 @@ bool InitBlockIndex() {
 
          	 //uncomment to log genesis block info
               //  start
-                if (true && block.GetHash() != hashGenesisBlock)
+                if (false && block.GetHash() != hashGenesisBlock)
                                {
                                    printf("Searching for genesis block...\n");
                                    uint256 hashTarget = CBigNum().SetCompact(block.nBits).getuint256();
