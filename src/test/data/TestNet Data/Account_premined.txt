@@ -1,3 +1,27 @@
     "PublicKey" : "04171414f9c1c79b62df77ce9c43529446f527316a90418e88b6e6709caea671a203fe114fd29ce674cdbf2d43126a53fde53a831c5fe97ed53cd94a9a394a1ff7",
     "PrivateKey" : "922KBR1EqG6PLTFH2emgyZ7mtFm4qocNWei4hz6AmF5W9mbkKAe",
     "PrivateKeyHex" : "30820113020101042039aaa9893c48067079aa85de545140fa215e7d5aab97999732b0320eed76cbcba081a53081a2020101302c06072a8648ce3d0101022100fffffffffffffffffffffffffffffffffffffffffffffffffffffffefffffc2f300604010004010704410479be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8022100fffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141020101a14403420004171414f9c1c79b62df77ce9c43529446f527316a90418e88b6e6709caea671a203fe114fd29ce674cdbf2d43126a53fde53a831c5fe97ed53cd94a9a394a1ff7"
+
+genesis block:
+
+{
+    "hash" : "000000006d888fcd8778bc901a17817c63a88ff573e21337c992f3d89642374c",
+    "confirmations" : 1,
+    "size" : 261,
+    "height" : 0,
+    "version" : 1,
+    "merkleroot" : "e5f043846d50390346be6ec10847e17c97eaf22da501006466a0f732524ef5a8",
+    "time" : 1516108500,
+    "nonce" : 206553132,
+    "bits" : "1d0fffff",
+    "difficulty" : 0.06249911,
+    "mint" : 0.00000000,
+    "flags" : "proof-of-work stake-modifier",
+    "proofhash" : "000000006d888fcd8778bc901a17817c63a88ff573e21337c992f3d89642374c",
+    "entropybit" : 0,
+    "modifier" : "0000000000000000",
+    "modifierchecksum" : "fd11f4e7",
+    "tx" : [
+        "e5f043846d50390346be6ec10847e17c97eaf22da501006466a0f732524ef5a8"
+    ]
+}
