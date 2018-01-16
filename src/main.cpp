@@ -2337,25 +2337,6 @@ bool CBlock::CheckBlock(CValidationState &state, bool fCheckPOW, bool fCheckMerk
     if (vtx.empty() || vtx.size() > MAX_BLOCK_SIZE || ::GetSerializeSize(*this, SER_NETWORK, PROTOCOL_VERSION) > MAX_BLOCK_SIZE)
         return state.DoS(100, error("CheckBlock() : size limits failed"));
 
-    // Special short-term limits to avoid 10,000 BDB lock limit:
-    if (GetBlockTime() >= 1363867200 && // start enforcing 21 March 2013, noon GMT
-        GetBlockTime() < 1368576000)  // stop enforcing 15 May 2013 00:00:00
-    {
-        // Rule is: #unique txids referenced <= 4,500
-        // ... to prevent 10,000 BDB lock exhaustion on old clients
-        set<uint256> setTxIn;
-        for (size_t i = 0; i < vtx.size(); i++)
-        {
-            setTxIn.insert(vtx[i].GetHash());
-            if (i == 0) continue; // skip coinbase txin
-            BOOST_FOREACH(const CTxIn& txin, vtx[i].vin)
-                setTxIn.insert(txin.prevout.hash);
-        }
-        size_t nTxids = setTxIn.size();
-        if (nTxids > 4500)
-            return error("CheckBlock() : 15 May maxlocks violation");
-    }
-
     // Check proof of work matches claimed amount
     if (fCheckPOW && IsProofOfWork() && !CheckProofOfWork(GetHash(), nBits))
         return state.DoS(50, error("CheckBlock() : proof of work failed"));
@@ -3270,7 +3251,7 @@ bool InitBlockIndex() {
         // Genesis block
         const char* pszTimestamp = "This is the genesis block. Davincicoins"; //genesis block message
         CTransaction txNew;
-        txNew.nTime = 1515913200;
+        txNew.nTime = 1516108200; //2018-01-16 13:10
         txNew.vin.resize(1);
         txNew.vout.resize(1);
         txNew.vin[0].scriptSig = CScript() << 486604799 << CBigNum(9999) << vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));
@@ -3280,14 +3261,16 @@ bool InitBlockIndex() {
         block.hashPrevBlock = 0;
         block.hashMerkleRoot = block.BuildMerkleTree();
         block.nVersion = 1;
-        block.nTime    = 1515999600;
+        block.nTime    = 1516108800; //2018-01-16 13:20
         block.nBits    = bnProofOfWorkLimit.GetCompact();
         block.nNonce   = 0;
 
+        //NOTE: No more than 2 hour difference between tx and block times, and tx time must be older than block time.
+
         if (fTestNet)
         {
-            block.nTime    = 1515999600;
-            block.nNonce   = 241809777;
+            block.nTime    = 1516108500; //2018-01-16 13:15
+            block.nNonce   = 0;
         }
 
 #ifdef TESTING
@@ -3342,10 +3325,10 @@ bool InitBlockIndex() {
 
         if (fTestNet)
         {
-        assert(block.hashMerkleRoot == hashMerkleRootGBlockTestNet);//Here it goes the testnet hash
+        assert(block.hashMerkleRoot == hashMerkleRootGBlockTestNet);//testnet hash
         }
         else{
-        assert(block.hashMerkleRoot == hashMerkleRootGBlockOfficial);//Here it goes the normal hash
+        assert(block.hashMerkleRoot == hashMerkleRootGBlockOfficial);//normal hash
         }
 
         block.print();
