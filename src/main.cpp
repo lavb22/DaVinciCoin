@@ -3280,7 +3280,7 @@ bool InitBlockIndex() {
         block.hashPrevBlock = 0;
         block.hashMerkleRoot = block.BuildMerkleTree();
         block.nVersion = 1;
-        block.nTime    = 1345084287;
+        block.nTime    = 1515999600;
         block.nBits    = bnProofOfWorkLimit.GetCompact();
         block.nNonce   = 2179302059u;
 
@@ -3313,6 +3313,9 @@ bool InitBlockIndex() {
         // DCS: check genesis block
         {
             CValidationState state;
+            //test pourposes
+            block.CheckBlock(state);
+            //test end
             assert(block.CheckBlock(state));
         }
 
