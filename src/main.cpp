@@ -1706,7 +1706,7 @@ void ThreadScriptCheck() {
 bool CBlock::ConnectBlock(CValidationState &state, CBlockIndex* pindex, CCoinsViewCache &view, bool fJustCheck)
 {
     // Check it again in case a previous version let a bad block in
-    if (!CheckBlock(state, !fJustCheck, !fJustCheck))
+    if (!CheckBlock(state, !fJustCheck, !fJustCheck,(GetHash() == hashGenesisBlock)))
         return false;
 
     // verify that the view's current state corresponds to the previous block
@@ -2581,7 +2581,7 @@ bool ProcessBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBl
     }
 
     // Preliminary checks
-    if (!pblock->CheckBlock(state))
+    if (!pblock->CheckBlock(state,true,true,(pblock->GetHash()==hashGenesisBlock)))
         return error("ProcessBlock() : CheckBlock FAILED");
 
     // DCS: verify hash target and signature of coinstake tx
@@ -3135,7 +3135,7 @@ bool VerifyDB() {
         if (!block.ReadFromDisk(pindex))
             return error("VerifyDB() : *** block.ReadFromDisk failed at %d, hash=%s", pindex->nHeight, pindex->GetBlockHash().ToString().c_str());
         // check level 1: verify block validity
-        if (nCheckLevel >= 1 && !block.CheckBlock(state))
+        if (nCheckLevel >= 1 && !block.CheckBlock(state,true,true,(block.GetHash()==hashGenesisBlock)))
             return error("VerifyDB() : *** found bad block at %d, hash=%s\n", pindex->nHeight, pindex->GetBlockHash().ToString().c_str());
         // check level 2: verify undo validity
         if (nCheckLevel >= 2 && pindex) {
@@ -3340,7 +3340,7 @@ bool InitBlockIndex() {
         // DCS: check genesis block
         {
             CValidationState state;
-            assert(block.CheckBlock(state,true,true,true));//special case only for premined in coin
+            assert(block.CheckBlock(state,true,true,(hash == hashGenesisBlock)));//special case only for premined in coin
         }
 
         // Start new block file
