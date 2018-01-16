@@ -3258,7 +3258,7 @@ bool InitBlockIndex() {
         txNew.vout[0].SetEmpty(); //Modify this to assign coins to an specific address with a value
         txNew.vout[0].nValue = 7500000 * COIN;
         CPubKey pubkeyGenesis;
-        pubkeyGenesis(ParseHex("04171414f9c1c79b62df77ce9c43529446f527316a90418e88b6e6709caea671a203fe114fd29ce674cdbf2d43126a53fde53a831c5fe97ed53cd94a9a394a1ff7"));
+        pubkeyGenesis=CPubKey(ParseHex("04171414f9c1c79b62df77ce9c43529446f527316a90418e88b6e6709caea671a203fe114fd29ce674cdbf2d43126a53fde53a831c5fe97ed53cd94a9a394a1ff7"));
         txNew.vout[0].scriptPubKey << pubkeyGenesis << OP_CHECKSIG;
         CBlock block;
         block.vtx.push_back(txNew);
