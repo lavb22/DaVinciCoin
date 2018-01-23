@@ -956,7 +956,10 @@ int CMerkleTx::GetDepthInMainChain(CBlockIndex* &pindexRet) const
 
     if (hashBlock == 0 || nIndex == -1)
         return 0;
+    if (hashBlock == hashGenesisBlock) {
     return 180; //TEST
+    printf("Genesis block depth used\n");
+    }
     // Find the block it claims to be in
     map<uint256, CBlockIndex*>::iterator mi = mapBlockIndex.find(hashBlock);
     if (mi == mapBlockIndex.end())
@@ -1715,11 +1718,11 @@ bool CBlock::ConnectBlock(CValidationState &state, CBlockIndex* pindex, CCoinsVi
 
     // Special case for the genesis block, skipping connection of its transactions
     // (its coinbase is unspendable)
-    /*if (GetHash() == hashGenesisBlock) {
-        view.SetBestBlock(pindex);
+    if (GetHash() == hashGenesisBlock) {
+        //view.SetBestBlock(pindex);
         pindexGenesisBlock = pindex;
-        return true;
-    }*/
+        //return true;
+    }
     printf("INICIO\n");
     bool fScriptChecks = pindex->nHeight >= Checkpoints::GetTotalBlocksEstimate();
     printf("ScriptChecks\n");
@@ -1848,6 +1851,7 @@ bool CBlock::ConnectBlock(CValidationState &state, CBlockIndex* pindex, CCoinsVi
         printf("ConnectBlock() : destroy=%s nFees=%" PRI64d"\n", FormatMoney(nFees).c_str(), nFees);
     printf("WRITEUNDO\n");
     // Write undo information to disk
+    if (!(GetHash() == hashGenesisBlock)) {
     if (pindex->GetUndoPos().IsNull() || (pindex->nStatus & BLOCK_VALID_MASK) < BLOCK_VALID_SCRIPTS)
     {
         if (pindex->GetUndoPos().IsNull()) {
@@ -1867,7 +1871,7 @@ bool CBlock::ConnectBlock(CValidationState &state, CBlockIndex* pindex, CCoinsVi
         CDiskBlockIndex blockindex(pindex);
         if (!pblocktree->WriteBlockIndex(blockindex))
             return state.Abort(_("Failed to write block index"));
-    }
+    } }
     printf("WRITEINDEX\n");
 
     if (fTxIndex)
