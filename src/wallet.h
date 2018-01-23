@@ -615,6 +615,7 @@ public:
     int64 GetAvailableCredit(bool fUseCache=true) const
     {
         // Must wait until coinbase is safely deep enough in the chain before valuing it
+    	printf("GETBLOCKSTOMATURITY: %d\n", GetBlocksToMaturity()); printf("VOUTSIZE: %d\n", vout.size()); //TEST-O
         if ((IsCoinBase() || IsCoinStake()) && GetBlocksToMaturity() > 0)
             return 0;
 
@@ -622,12 +623,16 @@ public:
             return nAvailableCreditCached;
 
         int64 nCredit = 0;
+        printf("VOUTSIZE: %d\n", vout.size()); //TEST-O
         for (unsigned int i = 0; i < vout.size(); i++)
-        {
+        {printf("ISSPENT: %d\n", IsSpent(i)); //TEST-O
+         const CTxOut &txout = vout[i];
+         printf("GETCREDIT: %lld\n", pwallet->GetCredit(txout));
+
             if (!IsSpent(i))
             {
                 const CTxOut &txout = vout[i];
-                nCredit += pwallet->GetCredit(txout);
+                 nCredit += pwallet->GetCredit(txout);
                 if (!MoneyRange(nCredit))
                     throw std::runtime_error("CWalletTx::GetAvailableCredit() : value out of range");
             }
