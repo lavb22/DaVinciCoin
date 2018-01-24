@@ -1723,9 +1723,7 @@ bool CBlock::ConnectBlock(CValidationState &state, CBlockIndex* pindex, CCoinsVi
         pindexGenesisBlock = pindex;
         //return true;
     }
-    printf("INICIO\n");
     bool fScriptChecks = pindex->nHeight >= Checkpoints::GetTotalBlocksEstimate();
-    printf("ScriptChecks\n");
     // Do not allow blocks that contain transactions which 'overwrite' older transactions,
     // unless those are already completely spent.
     // If such overwrites are allowed, coinbases and transactions depending upon those
@@ -1748,7 +1746,6 @@ bool CBlock::ConnectBlock(CValidationState &state, CBlockIndex* pindex, CCoinsVi
                 return state.DoS(100, error("ConnectBlock() : tried to overwrite transaction"));
         }
     }
-    printf("EnforceBIP30\n");
 
     // BIP16 didn't become active until Apr 1 2012
     bool fStrictPayToScriptHash = true;
@@ -1762,7 +1759,7 @@ bool CBlock::ConnectBlock(CValidationState &state, CBlockIndex* pindex, CCoinsVi
         flags |= SCRIPT_VERIFY_CHECKLOCKTIMEVERIFY;
     }
     }
-    printf("BLOCKUNDO\n");
+
     CBlockUndo blockundo;
 
     CCheckQueueControl<CScriptCheck> control(fScriptChecks && nScriptCheckThreads ? &scriptcheckqueue : NULL);
@@ -1773,11 +1770,11 @@ bool CBlock::ConnectBlock(CValidationState &state, CBlockIndex* pindex, CCoinsVi
     int64 nValueOut = 0;
     int nInputs = 0;
     unsigned int nSigOps = 0;
-    printf("POS\n");
+
     CDiskTxPos pos(pindex->GetBlockPos(), GetSizeOfCompactSize(vtx.size()));
     std::vector<std::pair<uint256, CDiskTxPos> > vPos;
     vPos.reserve(vtx.size());
-    printf("FOR LOOP\n");
+
     for (unsigned int i=0; i<vtx.size(); i++)
     {
         const CTransaction &tx = vtx[i];
@@ -1821,7 +1818,7 @@ bool CBlock::ConnectBlock(CValidationState &state, CBlockIndex* pindex, CCoinsVi
         tx.UpdateCoins(state, view, txundo, pindex->nHeight, GetTxHash(i));
         if (!tx.IsCoinBase())
             blockundo.vtxundo.push_back(txundo);
-        printf("UPDATEDCOINS\n");
+
         vPos.push_back(std::make_pair(GetTxHash(i), pos));
         pos.nTxOffset += ::GetSerializeSize(tx, SER_DISK, CLIENT_VERSION);
     }
@@ -1841,15 +1838,16 @@ bool CBlock::ConnectBlock(CValidationState &state, CBlockIndex* pindex, CCoinsVi
         return true;
 
     // DCS: track money supply and mint amount info
-    printf("TRACK MONEY\n");
+
     pindex->nMint = nValueOut - nValueIn + nFees;
     pindex->nMoneySupply = (pindex->pprev? pindex->pprev->nMoneySupply : 0) + nValueOut - nValueIn;
+
 
     // DCS: fees are not collected by miners as in bitcoin
     // DCS: fees are destroyed to compensate the entire network
     if (fDebug && GetBoolArg("-printcreation"))
         printf("ConnectBlock() : destroy=%s nFees=%" PRI64d"\n", FormatMoney(nFees).c_str(), nFees);
-    printf("WRITEUNDO\n");
+
     // Write undo information to disk
     if (!(GetHash() == hashGenesisBlock)) {
     if (pindex->GetUndoPos().IsNull() || (pindex->nStatus & BLOCK_VALID_MASK) < BLOCK_VALID_SCRIPTS)
@@ -1872,7 +1870,6 @@ bool CBlock::ConnectBlock(CValidationState &state, CBlockIndex* pindex, CCoinsVi
         if (!pblocktree->WriteBlockIndex(blockindex))
             return state.Abort(_("Failed to write block index"));
     } }
-    printf("WRITEINDEX\n");
 
     if (fTxIndex)
         if (!pblocktree->WriteTxIndex(vPos))
@@ -1880,11 +1877,11 @@ bool CBlock::ConnectBlock(CValidationState &state, CBlockIndex* pindex, CCoinsVi
 
     // add this block to the view's block chain
     assert(view.SetBestBlock(pindex));
-    printf("FIN\n");
+
     // Watch for transactions paying to me
     for (unsigned int i=0; i<vtx.size(); i++)
         SyncWithWallets(GetTxHash(i), vtx[i], this, true);
-    printf("FINITO\n");
+
     return true;
 }
 
@@ -3210,21 +3207,13 @@ bool LoadBlockIndex()
 
     if (fTestNet)
     {
-#ifdef TESTING
-        hashGenesisBlock = uint256("00008d0d88095d31f6dbdbcf80f6e51f71adf2be15740301f5e05cc0f3b2d2c0");
-        bnProofOfWorkLimit = CBigNum(~uint256(0) >> 15);
-        nStakeMinAge = 60 * 60 * 24; // test net min age is 1 day
-        nCoinbaseMaturity = 60;
-        bnInitialHashTarget = CBigNum(~uint256(0) >> 15);
-        nModifierInterval = 60 * 20; // test net modifier interval is 20 minutes
-#else
         hashGenesisBlock = hashGenesisBlockTestNet;
         bnProofOfWorkLimit = CBigNum(~uint256(0) >> 28);
-        nStakeMinAge = 60 * 60 * 24; // test net min age is 1 day
+        nStakeMinAge = 60; // test net min age is 1 min
         nCoinbaseMaturity = 1;
         bnInitialHashTarget = CBigNum(~uint256(0) >> 29);
         nModifierInterval = 60 * 20; // test net modifier interval is 20 minutes
-#endif
+
     }
 
     printf("%s Network: genesis=0x%s nBitsLimit=0x%08x nBitsInitial=0x%08x nStakeMinAge=%d nCoinbaseMaturity=%d nModifierInterval=%d\n",

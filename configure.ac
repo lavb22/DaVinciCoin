@@ -14,6 +14,10 @@ AC_CANONICAL_HOST
 AH_TOP([#ifndef DAVINCICOIN_CONFIG_H])
 AH_TOP([#define DAVINCICOIN_CONFIG_H])
 AH_BOTTOM([#endif //DAVINCICOIN_CONFIG_H])
+#TESTING
+AH_TOP([#ifndef TESTING])
+AH_TOP([#define TESTING])
+AH_BOTTOM([#endif //TESTING])
 
 # This m4 will only be used if a system copy cannot be found. This is helpful
 # on systems where autotools are installed but the pkg-config macros are not in
