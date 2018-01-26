@@ -3209,7 +3209,7 @@ bool LoadBlockIndex()
     {
         hashGenesisBlock = hashGenesisBlockTestNet;
         bnProofOfWorkLimit = CBigNum(~uint256(0) >> 28);
-        nStakeMinAge = 60; // test net min age is 1 min
+        nStakeMinAge = 60 * 60 * 24 * 9; // test net min age is 30 days
         nCoinbaseMaturity = 1;
         bnInitialHashTarget = CBigNum(~uint256(0) >> 29);
         nModifierInterval = 60 * 20; // test net modifier interval is 20 minutes
@@ -4858,10 +4858,6 @@ CBlockTemplate* CreateNewBlock(CReserveKey& reservekey, CWallet* pwallet, bool f
     // Limit to betweeen 1K and MAX_BLOCK_SIZE-1K for sanity:
     nBlockMaxSize = std::max((unsigned int)1000, std::min((unsigned int)(MAX_BLOCK_SIZE-1000), nBlockMaxSize));
 
-    // Special compatibility rule before 15 May: limit size to 500,000 bytes:
-    if (GetAdjustedTime() < 1368576000)
-        nBlockMaxSize = std::min(nBlockMaxSize, (unsigned int)(MAX_BLOCK_SIZE_GEN));
-
     // How much of the block should be dedicated to high-priority transactions,
     // included regardless of the fees they pay
     unsigned int nBlockPrioritySize = GetArg("-blockprioritysize", DEFAULT_BLOCK_PRIORITY_SIZE);
@@ -5252,7 +5248,7 @@ void DavincicoinMiner(CWallet *pwallet, bool fProofOfStake)
     string strMintMessage = _("Info: Minting suspended due to locked wallet.");
     string strMintDisabledMessage = _("Info: Minting disabled by 'nominting' option.");
     string strMintBlockMessage = _("Info: Minting suspended due to block creation failure.");
-
+    printf("LOOP STARTED \n");
     try { loop {
         if (GetBoolArg("-nominting"))
         {
@@ -5264,7 +5260,7 @@ void DavincicoinMiner(CWallet *pwallet, bool fProofOfStake)
             MilliSleep(1000);
 
         while (pwallet->IsLocked())
-        {
+        {  printf("LOOP TIME \n");
             strMintWarning = strMintMessage;
             MilliSleep(1000);
         }
@@ -5275,7 +5271,7 @@ void DavincicoinMiner(CWallet *pwallet, bool fProofOfStake)
         //
         unsigned int nTransactionsUpdatedLast = nTransactionsUpdated;
         CBlockIndex* pindexPrev = pindexBest;
-
+        printf("TRY TO CREATE A BLOCK \n");
         auto_ptr<CBlockTemplate> pblocktemplate(CreateNewBlock(reservekey, pwallet, fProofOfStake));
         if (!pblocktemplate.get())
         {
@@ -5314,6 +5310,7 @@ void DavincicoinMiner(CWallet *pwallet, bool fProofOfStake)
                 SetThreadPriority(THREAD_PRIORITY_LOWEST);
 #endif
             }
+            printf("BLOCK CREATION FAILED \n");
             MilliSleep(500);
             continue;
         }

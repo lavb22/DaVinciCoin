@@ -12,7 +12,7 @@ using namespace std;
 
 // Protocol switch time of v0.3 kernel protocol
 unsigned int nProtocolV03SwitchTime     = 1363800000;
-unsigned int nProtocolV03TestSwitchTime = 1359781000;
+unsigned int nProtocolV03TestSwitchTime = 1521680461; //CHANGED TO V0.2
 // Protocol switch time of v0.4 kernel protocol
 unsigned int nProtocolV04SwitchTime     = 1399300000;
 unsigned int nProtocolV04TestSwitchTime = 1395700000;
@@ -291,7 +291,7 @@ static bool GetKernelStakeModifierV05(unsigned int nTimeTx, uint64& nStakeModifi
     nStakeModifierHeight = pindex->nHeight;
     nStakeModifierTime = pindex->GetBlockTime();
     int64 nStakeModifierSelectionInterval = GetStakeModifierSelectionInterval();
-
+    printf("GET KERNEL STAKE, nStakeModifierTime: %lld, nStakeMinAge: %d, nStakeModifierSelectionInterval: %lld,nTimeTx: %d\n SUMA: %lld\n",nStakeModifierTime,nStakeMinAge,nStakeModifierSelectionInterval,nTimeTx,nStakeModifierTime + nStakeMinAge - nStakeModifierSelectionInterval);
     if (nStakeModifierTime + nStakeMinAge - nStakeModifierSelectionInterval <= (int64) nTimeTx)
     {
         // Best block is still more than
@@ -304,6 +304,7 @@ static bool GetKernelStakeModifierV05(unsigned int nTimeTx, uint64& nStakeModifi
     }
     // loop to find the stake modifier earlier by 
     // (nStakeMinAge minus a selection interval)
+    printf("GET KERNEL STAKE - PPREV \n");
     while (nStakeModifierTime + nStakeMinAge - nStakeModifierSelectionInterval >(int64) nTimeTx)
     {
         if (!pindex->pprev)
@@ -317,6 +318,7 @@ static bool GetKernelStakeModifierV05(unsigned int nTimeTx, uint64& nStakeModifi
             nStakeModifierTime = pindex->GetBlockTime();
         }
     }
+    printf("GET KERNEL STAKE -  END\n");
     nStakeModifier = pindex->nStakeModifier;
     return true;
 }
@@ -412,6 +414,7 @@ bool CheckStakeKernelHash(unsigned int nBits, const CBlockHeader& blockFrom, uns
     uint64 nStakeModifier = 0;
     int nStakeModifierHeight = 0;
     int64 nStakeModifierTime = 0;
+    printf("KERNEL\n");
     if (IsProtocolV03(nTimeTx))  // v0.3 protocol
     {
         if (!GetKernelStakeModifier(blockFrom.GetHash(), nTimeTx, nStakeModifier, nStakeModifierHeight, nStakeModifierTime, fPrintProofOfStake))
@@ -422,7 +425,7 @@ bool CheckStakeKernelHash(unsigned int nBits, const CBlockHeader& blockFrom, uns
     {
         ss << nBits;
     }
-
+    printf("KERNEL YES\n");
     ss << nTimeBlockFrom << nTxPrevOffset << txPrev.nTime << prevout.n << nTimeTx;
     hashProofOfStake = Hash(ss.begin(), ss.end());
     if (fPrintProofOfStake)

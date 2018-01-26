@@ -1023,12 +1023,15 @@ void CWallet::AvailableCoins(std::vector<COutput>& vCoins, unsigned int nSpendTi
 
             if ((pcoin->IsCoinBase() || pcoin->IsCoinStake()) && pcoin->GetBlocksToMaturity() > 0)
                 continue;
+            printf("AVALIABLE - LLEGO HASTA VERIFICACION");
+
 
             for (unsigned int i = 0; i < pcoin->vout.size(); i++) {
                 if (!(pcoin->IsSpent(i)) && IsMine(pcoin->vout[i]) &&
                     !IsLockedCoin((*it).first, i) && pcoin->vout[i].nValue > 0 &&
                     (!coinControl || !coinControl->HasSelected() || coinControl->IsSelected((*it).first, i)))
-                    vCoins.push_back(COutput(pcoin, i, pcoin->GetDepthInMainChain()));
+                {printf("AVALIABLE - ENTRO A LA VERIFICACION\n");
+                    vCoins.push_back(COutput(pcoin, i, pcoin->GetDepthInMainChain()));}
             }
         }
     }
@@ -1194,10 +1197,11 @@ bool CWallet::SelectCoins(int64 nTargetValue, unsigned int nSpendTime, set<pair<
         {
             nValueRet += out.tx->vout[out.i].nValue;
             setCoinsRet.insert(make_pair(out.tx, out.i));
+            printf("USING THIS, Bvalueret: %lld \n",nValueRet);//TESTO
         }
         return (nValueRet >= nTargetValue);
     }
-
+    printf("USING OTHER, Bvalueret: %lld \n",nValueRet);//TESTO
     return (SelectCoinsMinConf(nTargetValue, 1, 6, vCoins, setCoinsRet, nValueRet) ||
             SelectCoinsMinConf(nTargetValue, 1, 1, vCoins, setCoinsRet, nValueRet) ||
             SelectCoinsMinConf(nTargetValue, 0, 1, vCoins, setCoinsRet, nValueRet));
@@ -1420,8 +1424,9 @@ bool CWallet::CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, int
         return false;
     int64 nCredit = 0;
     CScript scriptPubKeyKernel;
+    printf("CREATECOINSTAKE - START LOOP\n");
     BOOST_FOREACH(PAIRTYPE(const CWalletTx*, unsigned int) pcoin, setCoins)
-    {
+    {printf("CREATECOINSTAKE - AT LEAST ONE:  HASH : %s\n",pcoin.first->GetHash().ToString().c_str());
         CDiskTxPos postx;
         if (!pblocktree->ReadTxIndex(pcoin.first->GetHash(), postx))
             continue;
@@ -1434,11 +1439,11 @@ bool CWallet::CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, int
         } catch (std::exception &e) {
             return error("%s() : deserialize or I/O error in CreateCoinStake()", __PRETTY_FUNCTION__);
         }
-
+        printf("CREATECOINSTAKE -CHECKCOINTIME\n");
         static int nMaxStakeSearchInterval = 60;
         if (header.GetBlockTime() + nStakeMinAge > txNew.nTime - nMaxStakeSearchInterval)
             continue; // only count coins meeting min age requirement
-
+        printf("CREATECOINSTAKE -CHECKed\n");
         bool fKernelFound = false;
         for (unsigned int n=0; n<min(nSearchInterval,(int64)nMaxStakeSearchInterval) && !fKernelFound; n++)
         {
@@ -1446,10 +1451,11 @@ bool CWallet::CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, int
             // Search nSearchInterval seconds back up to nMaxStakeSearchInterval
             uint256 hashProofOfStake = 0;
             COutPoint prevoutStake = COutPoint(pcoin.first->GetHash(), pcoin.second);
+            printf("quiereentrar\n");
             if (CheckStakeKernelHash(nBits, header, postx.nTxOffset + sizeof(CBlockHeader), *pcoin.first, prevoutStake, txNew.nTime - n, hashProofOfStake))
-            {
+            {printf("entro\n");
                 // Found a kernel
-                if (fDebug && GetBoolArg("-printcoinstake"))
+                //if (fDebug && GetBoolArg("-printcoinstake"))
                     printf("CreateCoinStake : kernel found\n");
                 vector<valtype> vSolutions;
                 txnouttype whichType;
@@ -1457,15 +1463,15 @@ bool CWallet::CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, int
                 scriptPubKeyKernel = pcoin.first->vout[pcoin.second].scriptPubKey;
                 if (!Solver(scriptPubKeyKernel, whichType, vSolutions))
                 {
-                    if (fDebug && GetBoolArg("-printcoinstake"))
+                    //if (fDebug && GetBoolArg("-printcoinstake"))
                         printf("CreateCoinStake : failed to parse kernel type=%d\n", whichType);
                     break;
                 }
-                if (fDebug && GetBoolArg("-printcoinstake"))
+                //if (fDebug && GetBoolArg("-printcoinstake"))
                     printf("CreateCoinStake : parsed kernel type=%d\n", whichType);
                 if (whichType != TX_PUBKEY && whichType != TX_PUBKEYHASH)
                 {
-                    if (fDebug && GetBoolArg("-printcoinstake"))
+                    //if (fDebug && GetBoolArg("-printcoinstake"))
                         printf("CreateCoinStake : no support for kernel type=%d\n", whichType);
                     break;  // only support pay to public key and pay to address
                 }
@@ -1475,7 +1481,7 @@ bool CWallet::CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, int
                     CKey key;
                     if (!keystore.GetKey(uint160(vSolutions[0]), key))
                     {
-                        if (fDebug && GetBoolArg("-printcoinstake"))
+                        //if (fDebug && GetBoolArg("-printcoinstake"))
                             printf("CreateCoinStake : failed to get key for kernel type=%d\n", whichType);
                         break;  // unable to find corresponding public key
                     }
@@ -1500,6 +1506,7 @@ bool CWallet::CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, int
         if (fKernelFound)
             break; // if kernel is found stop searching
     }
+    printf("CREATECOINSTAKE - nCredit= %lld, nBalance= %lld, nReserveBalance= %lld \n",nCredit,nBalance,nReserveBalance);
     if (nCredit == 0 || nCredit > nBalance - nReserveBalance)
         return false;
     BOOST_FOREACH(PAIRTYPE(const CWalletTx*, unsigned int) pcoin, setCoins)
@@ -1529,6 +1536,7 @@ bool CWallet::CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, int
             vwtxPrev.push_back(pcoin.first);
         }
     }
+    printf("CREATECOINSTAKE - CALCULATE REWARD\n");
     // Calculate coin age reward
     {
         uint64 nCoinAge;
@@ -1544,7 +1552,7 @@ bool CWallet::CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, int
         }
         nCredit += nReward;
     }
-
+    printf("CREATECOINSTAKE - end calculations\n");
     int64 nMinFee = 0;
     loop
     {
@@ -1583,7 +1591,7 @@ bool CWallet::CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, int
             break;
         }
     }
-
+    printf("CREATECOINSTAKE - CREATED\n");
     // Successfully generated coinstake
     return true;
 }
