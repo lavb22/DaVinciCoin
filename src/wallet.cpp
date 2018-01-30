@@ -1023,14 +1023,12 @@ void CWallet::AvailableCoins(std::vector<COutput>& vCoins, unsigned int nSpendTi
 
             if ((pcoin->IsCoinBase() || pcoin->IsCoinStake()) && pcoin->GetBlocksToMaturity() > 0)
                 continue;
-            printf("AVALIABLE - LLEGO HASTA VERIFICACION");
-
 
             for (unsigned int i = 0; i < pcoin->vout.size(); i++) {
                 if (!(pcoin->IsSpent(i)) && IsMine(pcoin->vout[i]) &&
                     !IsLockedCoin((*it).first, i) && pcoin->vout[i].nValue > 0 &&
                     (!coinControl || !coinControl->HasSelected() || coinControl->IsSelected((*it).first, i)))
-                {printf("AVALIABLE - ENTRO A LA VERIFICACION\n");
+                {
                     vCoins.push_back(COutput(pcoin, i, pcoin->GetDepthInMainChain()));}
             }
         }

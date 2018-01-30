@@ -2126,7 +2126,7 @@ bool CTransaction::GetCoinAge(CValidationState &state, CCoinsViewCache &view, ui
             int64 nValueIn = txPrev.vout[txin.prevout.n].nValue;
             bnCentSecond += CBigNum(nValueIn) * (nTime-txPrev.nTime) / CENT;
 
-            if (fDebug && GetBoolArg("-printcoinage"))
+          //  if (fDebug && GetBoolArg("-printcoinage"))
                 printf("coin age nValueIn=%-12" PRI64d" nTimeDiff=%d bnCentSecond=%s\n", nValueIn, nTime - txPrev.nTime, bnCentSecond.ToString().c_str());
         }
         else
@@ -2134,7 +2134,7 @@ bool CTransaction::GetCoinAge(CValidationState &state, CCoinsViewCache &view, ui
     }
 
     CBigNum bnCoinDay = bnCentSecond * CENT / COIN / (24 * 60 * 60);
-    if (fDebug && GetBoolArg("-printcoinage"))
+   // if (fDebug && GetBoolArg("-printcoinage"))
         printf("coin age bnCoinDay=%s\n", bnCoinDay.ToString().c_str());
     nCoinAge = bnCoinDay.getuint64();
     return true;
@@ -3284,36 +3284,36 @@ bool InitBlockIndex() {
             block.nNonce   = 20978810;
         }
 
-         	 //uncomment to log genesis block info
-              //  start
-                if (true && block.GetHash() != hashGenesisBlock)
-                               {
-                                   printf("Searching for genesis block...\n");
-                                   uint256 hashTarget = CBigNum().SetCompact(block.nBits).getuint256();
-                                   uint256 thash;
-
-                                   while (true)
-                                   {
-                                       thash = block.GetHash();
-                                       if (thash <= hashTarget)
-                                           break;
-                                       if ((block.nNonce & 0xFFF) == 0)
-                                       {
-                                           printf("nonce %08X: hash = %s (target = %s)\n", block.nNonce, thash.ToString().c_str(), hashTarget.ToString().c_str());
-                                       }
-                                       ++block.nNonce;
-                                       if (block.nNonce == 0)
-                                       {
-                                           printf("NONCE WRAPPED, incrementing time\n");
-                                           ++block.nTime;
-                                       }
-                                   }
-                                   printf("genesis.nTime = %u \n", block.nTime);
-                                   printf("genesis.nNonce = %u \n", block.nNonce);
-                                   printf("genesis.nVersion = %u \n", block.nVersion);
-                               }
-
-                //end
+//         	 //uncomment to log genesis block info
+//              //  start
+//                if (true && block.GetHash() != hashGenesisBlock)
+//                               {
+//                                   printf("Searching for genesis block...\n");
+//                                   uint256 hashTarget = CBigNum().SetCompact(block.nBits).getuint256();
+//                                   uint256 thash;
+//
+//                                   while (true)
+//                                   {
+//                                       thash = block.GetHash();
+//                                       if (thash <= hashTarget)
+//                                           break;
+//                                       if ((block.nNonce & 0xFFF) == 0)
+//                                       {
+//                                           printf("nonce %08X: hash = %s (target = %s)\n", block.nNonce, thash.ToString().c_str(), hashTarget.ToString().c_str());
+//                                       }
+//                                       ++block.nNonce;
+//                                       if (block.nNonce == 0)
+//                                       {
+//                                           printf("NONCE WRAPPED, incrementing time\n");
+//                                           ++block.nTime;
+//                                       }
+//                                   }
+//                                   printf("genesis.nTime = %u \n", block.nTime);
+//                                   printf("genesis.nNonce = %u \n", block.nNonce);
+//                                   printf("genesis.nVersion = %u \n", block.nVersion);
+//                               }
+//
+//                //end
 
 
         //// debug print
@@ -3330,7 +3330,8 @@ bool InitBlockIndex() {
         assert(block.hashMerkleRoot == hashMerkleRootGBlockOfficial);//normal hash
         }
 
-        block.print();
+        //block.print(); //Uncomment if you want to see detailed info about the genesis block generated
+
         assert(hash == hashGenesisBlock);
         // DCS: check genesis block
         {
