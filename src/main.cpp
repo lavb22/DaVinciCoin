@@ -953,13 +953,13 @@ void CTxMemPool::queryHashes(std::vector<uint256>& vtxid)
 
 int CMerkleTx::GetDepthInMainChain(CBlockIndex* &pindexRet) const
 {
-
+	/* This is only for genesis block*/
+		if (hashBlock == hashGenesisBlock)
+    	return 50;
+	/*######*/
     if (hashBlock == 0 || nIndex == -1)
         return 0;
-    if (hashBlock == hashGenesisBlock) {
-    return 180; //TEST
-    printf("Genesis block depth used\n");
-    }
+
     // Find the block it claims to be in
     map<uint256, CBlockIndex*>::iterator mi = mapBlockIndex.find(hashBlock);
     if (mi == mapBlockIndex.end())
@@ -985,7 +985,7 @@ int CMerkleTx::GetBlocksToMaturity() const
 {
     if (!(IsCoinBase() || IsCoinStake()))
         return 0;
-    return max(0, (nCoinbaseMaturity+20) - GetDepthInMainChain());
+    return max(0, nCoinbaseMaturity +20 - GetDepthInMainChain());
 }
 
 
@@ -3253,13 +3253,20 @@ bool InitBlockIndex() {
         CTransaction txNew;
         txNew.nTime = 1516108200; //2018-01-16 13:10
         txNew.vin.resize(1);
-        txNew.vout.resize(1);
+        txNew.vout.resize(7500);
         txNew.vin[0].scriptSig = CScript() << 486604799 << CBigNum(9999) << vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));
-        txNew.vout[0].SetEmpty(); //Modify this to assign coins to an specific address with a value
-        txNew.vout[0].nValue = 7500000 * COIN;
+
         CPubKey pubkeyGenesis;
         pubkeyGenesis=CPubKey(ParseHex("04171414f9c1c79b62df77ce9c43529446f527316a90418e88b6e6709caea671a203fe114fd29ce674cdbf2d43126a53fde53a831c5fe97ed53cd94a9a394a1ff7"));
-        txNew.vout[0].scriptPubKey << pubkeyGenesis << OP_CHECKSIG;
+
+        //Premining, using a single transaction with 7,5K outputs of the max mint reward possible (1000 DCS)
+
+        for (int ii=0; ii<7500 ; ii++){
+        txNew.vout[ii].SetEmpty(); //Modify this to assign coins to an specific address with a value
+        txNew.vout[ii].nValue = 1000 * COIN;
+        txNew.vout[ii].scriptPubKey << pubkeyGenesis << OP_CHECKSIG;
+        }
+
         CBlock block;
         block.vtx.push_back(txNew);
         block.hashPrevBlock = 0;
@@ -3274,58 +3281,46 @@ bool InitBlockIndex() {
         if (fTestNet)
         {
             block.nTime    = 1516108500; //2018-01-16 13:15
-            block.nNonce   = 206553132;
+            block.nNonce   = 20978810;
         }
 
-#ifdef TESTING
-        CBigNum bnTarget;
-        bnTarget.SetCompact(block.nBits);
-        while (block.GetHash() > bnTarget.getuint256())
-        {
-            if (block.nNonce % 1048576 == 0)
-                printf("n=%dM hash=%s\n", block.nNonce / 1048576,
-                       block.GetHash().ToString().c_str());
-            block.nNonce++;
-        }
-#endif
+         	 //uncomment to log genesis block info
+              //  start
+                if (true && block.GetHash() != hashGenesisBlock)
+                               {
+                                   printf("Searching for genesis block...\n");
+                                   uint256 hashTarget = CBigNum().SetCompact(block.nBits).getuint256();
+                                   uint256 thash;
 
-//         	 //uncomment to log genesis block info
-//              //  start
-//                if (true && block.GetHash() != hashGenesisBlock)
-//                               {
-//                                   printf("Searching for genesis block...\n");
-//                                   uint256 hashTarget = CBigNum().SetCompact(block.nBits).getuint256();
-//                                   uint256 thash;
-//
-//                                   while (true)
-//                                   {
-//                                       thash = block.GetHash();
-//                                       if (thash <= hashTarget)
-//                                           break;
-//                                       if ((block.nNonce & 0xFFF) == 0)
-//                                       {
-//                                           printf("nonce %08X: hash = %s (target = %s)\n", block.nNonce, thash.ToString().c_str(), hashTarget.ToString().c_str());
-//                                       }
-//                                       ++block.nNonce;
-//                                       if (block.nNonce == 0)
-//                                       {
-//                                           printf("NONCE WRAPPED, incrementing time\n");
-//                                           ++block.nTime;
-//                                       }
-//                                   }
-//                                   printf("genesis.nTime = %u \n", block.nTime);
-//                                   printf("genesis.nNonce = %u \n", block.nNonce);
-//                                   printf("genesis.nVersion = %u \n", block.nVersion);
-//                               }
-//
-//                //end
+                                   while (true)
+                                   {
+                                       thash = block.GetHash();
+                                       if (thash <= hashTarget)
+                                           break;
+                                       if ((block.nNonce & 0xFFF) == 0)
+                                       {
+                                           printf("nonce %08X: hash = %s (target = %s)\n", block.nNonce, thash.ToString().c_str(), hashTarget.ToString().c_str());
+                                       }
+                                       ++block.nNonce;
+                                       if (block.nNonce == 0)
+                                       {
+                                           printf("NONCE WRAPPED, incrementing time\n");
+                                           ++block.nTime;
+                                       }
+                                   }
+                                   printf("genesis.nTime = %u \n", block.nTime);
+                                   printf("genesis.nNonce = %u \n", block.nNonce);
+                                   printf("genesis.nVersion = %u \n", block.nVersion);
+                               }
+
+                //end
 
 
         //// debug print
         uint256 hash = block.GetHash();
-        printf("%s\n", hash.ToString().c_str());
-        printf("%s\n", hashGenesisBlock.ToString().c_str());
-        printf("%s\n", block.hashMerkleRoot.ToString().c_str());
+        printf("Generated Hash: %s\n", hash.ToString().c_str());
+        printf("Hash Genesis Block: %s\n", hashGenesisBlock.ToString().c_str());
+        printf("Generated MerkleRoot Hash: %s\n", block.hashMerkleRoot.ToString().c_str());
 
         if (fTestNet)
         {
@@ -5248,7 +5243,6 @@ void DavincicoinMiner(CWallet *pwallet, bool fProofOfStake)
     string strMintMessage = _("Info: Minting suspended due to locked wallet.");
     string strMintDisabledMessage = _("Info: Minting disabled by 'nominting' option.");
     string strMintBlockMessage = _("Info: Minting suspended due to block creation failure.");
-    printf("LOOP STARTED \n");
     try { loop {
         if (GetBoolArg("-nominting"))
         {
@@ -5260,8 +5254,8 @@ void DavincicoinMiner(CWallet *pwallet, bool fProofOfStake)
             MilliSleep(1000);
 
         while (pwallet->IsLocked())
-        {  printf("LOOP TIME \n");
-            strMintWarning = strMintMessage;
+        {
+        	strMintWarning = strMintMessage;
             MilliSleep(1000);
         }
         strMintWarning = "";
@@ -5271,7 +5265,6 @@ void DavincicoinMiner(CWallet *pwallet, bool fProofOfStake)
         //
         unsigned int nTransactionsUpdatedLast = nTransactionsUpdated;
         CBlockIndex* pindexPrev = pindexBest;
-        printf("TRY TO CREATE A BLOCK \n");
         auto_ptr<CBlockTemplate> pblocktemplate(CreateNewBlock(reservekey, pwallet, fProofOfStake));
         if (!pblocktemplate.get())
         {
@@ -5310,7 +5303,6 @@ void DavincicoinMiner(CWallet *pwallet, bool fProofOfStake)
                 SetThreadPriority(THREAD_PRIORITY_LOWEST);
 #endif
             }
-            printf("BLOCK CREATION FAILED \n");
             MilliSleep(500);
             continue;
         }
