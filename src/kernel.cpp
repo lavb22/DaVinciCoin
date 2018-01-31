@@ -12,13 +12,13 @@ using namespace std;
 
 // Protocol switch time of v0.3 kernel protocol
 unsigned int nProtocolV03SwitchTime     = 1363800000;
-unsigned int nProtocolV03TestSwitchTime = 1521680461; //CHANGED TO V0.2
+unsigned int nProtocolV03TestSwitchTime = 1577836800; //CHANGED TO V0.2
 // Protocol switch time of v0.4 kernel protocol
 unsigned int nProtocolV04SwitchTime     = 1399300000;
-unsigned int nProtocolV04TestSwitchTime = 1395700000;
+unsigned int nProtocolV04TestSwitchTime = 1577836800;
 // Protocol switch time of v0.5 kernel protocol
 unsigned int nProtocolV05SwitchTime     = 1461700000;
-unsigned int nProtocolV05TestSwitchTime = 1447700000;
+unsigned int nProtocolV05TestSwitchTime = 1577836800;
 // Protocol switch time of v0.6 kernel protocol
 // supermajority hardfork: actual fork will happen later than switch time
 const unsigned int nProtocolV06SwitchTime     = 1513050000; // Tue 12 Dec 03:40:00 UTC 2017
@@ -291,7 +291,7 @@ static bool GetKernelStakeModifierV05(unsigned int nTimeTx, uint64& nStakeModifi
     nStakeModifierHeight = pindex->nHeight;
     nStakeModifierTime = pindex->GetBlockTime();
     int64 nStakeModifierSelectionInterval = GetStakeModifierSelectionInterval();
-    printf("GET KERNEL STAKE, nStakeModifierTime: %lld, nStakeMinAge: %d, nStakeModifierSelectionInterval: %lld,nTimeTx: %d\n SUMA: %lld\n",nStakeModifierTime,nStakeMinAge,nStakeModifierSelectionInterval,nTimeTx,nStakeModifierTime + nStakeMinAge - nStakeModifierSelectionInterval);
+
     if (nStakeModifierTime + nStakeMinAge - nStakeModifierSelectionInterval <= (int64) nTimeTx)
     {
         // Best block is still more than
@@ -422,9 +422,11 @@ bool CheckStakeKernelHash(unsigned int nBits, const CBlockHeader& blockFrom, uns
     {
         ss << nBits;
     }
+
+
     ss << nTimeBlockFrom << nTxPrevOffset << txPrev.nTime << prevout.n << nTimeTx;
     hashProofOfStake = Hash(ss.begin(), ss.end());
-    if (fPrintProofOfStake)
+    if (true)//fPrintProofOfStake)
     {
         if (IsProtocolV03(nTimeTx))
             printf("CheckStakeKernelHash() : using modifier 0x%016" PRI64x" at height=%d timestamp=%s for block from height=%d timestamp=%s\n",
@@ -432,17 +434,16 @@ bool CheckStakeKernelHash(unsigned int nBits, const CBlockHeader& blockFrom, uns
                 DateTimeStrFormat(nStakeModifierTime).c_str(),
                 mapBlockIndex[blockFrom.GetHash()]->nHeight,
                 DateTimeStrFormat(blockFrom.GetBlockTime()).c_str());
-        printf("CheckStakeKernelHash() : check protocol=%s modifier=0x%016" PRI64x" nTimeBlockFrom=%u nTxPrevOffset=%u nTimeTxPrev=%u nPrevout=%u nTimeTx=%u hashProof=%s\n",
+        printf("CheckStakeKernelHash() : check protocol=%s modifier=0x%016" PRI64x" nTimeBlockFrom=%u nTxPrevOffset=%u nTimeTxPrev=%u nPrevout=%u nTimeTx=%u hashProof=%s\n\n",
             IsProtocolV05(nTimeTx)? "0.5" : (IsProtocolV03(nTimeTx)? "0.3" : "0.2"),
             IsProtocolV03(nTimeTx)? nStakeModifier : (uint64) nBits,
             nTimeBlockFrom, nTxPrevOffset, txPrev.nTime, prevout.n, nTimeTx,
             hashProofOfStake.ToString().c_str());
     }
-
     // Now check if proof-of-stake hash meets target protocol
     if (CBigNum(hashProofOfStake) > bnCoinDayWeight * bnTargetPerCoinDay)
         return false;
-    if (fDebug && !fPrintProofOfStake)
+    if (true)//fDebug && !fPrintProofOfStake)
     {
         if (IsProtocolV03(nTimeTx))
             printf("CheckStakeKernelHash() : using modifier 0x%016" PRI64x" at height=%d timestamp=%s for block from height=%d timestamp=%s\n",
@@ -450,7 +451,7 @@ bool CheckStakeKernelHash(unsigned int nBits, const CBlockHeader& blockFrom, uns
                 DateTimeStrFormat(nStakeModifierTime).c_str(),
                 mapBlockIndex[blockFrom.GetHash()]->nHeight,
                 DateTimeStrFormat(blockFrom.GetBlockTime()).c_str());
-        printf("CheckStakeKernelHash() : pass protocol=%s modifier=0x%016" PRI64x" nTimeBlockFrom=%u nTxPrevOffset=%u nTimeTxPrev=%u nPrevout=%u nTimeTx=%u hashProof=%s\n",
+        printf("CheckStakeKernelHash() : pass protocol=%s modifier=0x%016" PRI64x" nTimeBlockFrom=%u nTxPrevOffset=%u nTimeTxPrev=%u nPrevout=%u nTimeTx=%u hashProof=%s\n\n",
             IsProtocolV03(nTimeTx)? "0.3" : "0.2",
             IsProtocolV03(nTimeTx)? nStakeModifier : (uint64) nBits,
             nTimeBlockFrom, nTxPrevOffset, txPrev.nTime, prevout.n, nTimeTx,
@@ -460,7 +461,7 @@ bool CheckStakeKernelHash(unsigned int nBits, const CBlockHeader& blockFrom, uns
 }
 
 // Check kernel hash target and coinstake signature
-bool CheckProofOfStake(CValidationState &state, const CTransaction& tx, unsigned int nBits, uint256& hashProofOfStake)
+bool CheckProofOfStake(CValidationState &state,const CTransaction& tx, unsigned int nBits, uint256& hashProofOfStake)
 {
     if (!tx.IsCoinStake())
         return error("CheckProofOfStake() : called on non-coinstake %s", tx.GetHash().ToString().c_str());

@@ -1160,10 +1160,19 @@ int64 GetProofOfWorkReward(unsigned int nBits)
 // DCS: miner's coin stake is rewarded based on coin age spent (coin-days)
 int64 GetProofOfStakeReward(int64 nCoinAge)
 {
-    static int64 nRewardCoinYear = CENT;  // creation amount per coin-year
-    int64 nSubsidy = nCoinAge * 33 / (365 * 33 + 8) * nRewardCoinYear;
+
+    int64 nSubsidy;
+
+    if (nCoinAge <= 90000){
+    	static int64 nRewardCoinYear = 12053/594000 * COIN;  // creation amount per coin-year, about 0.02
+    	nSubsidy = nCoinAge * 33 / (365 * 33 + 8) * nRewardCoinYear;
+    	}
+    else
+    	nSubsidy = 5 * COIN;
+
     if (fDebug && GetBoolArg("-printcreation"))
         printf("GetProofOfStakeReward(): create=%s nCoinAge=%" PRI64d"\n", FormatMoney(nSubsidy).c_str(), nCoinAge);
+
     return nSubsidy;
 }
 

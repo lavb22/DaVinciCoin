@@ -68,7 +68,7 @@ static const int64 MIN_TXOUT_AMOUNT = MIN_TX_FEE;
 /** Coinbase transaction outputs can only be spent after this number of new blocks (network rule) */
 static const int COINBASE_MATURITY = 1; // TODO: check if enough
 /** Threshold for nLockTime: below this value it is interpreted as block number, otherwise as UNIX timestamp. */
-static const int STAKE_TARGET_SPACING = 10 * 60; // 10-minute block spacing 
+static const int STAKE_TARGET_SPACING = 1 * 60; // 1-minute block spacing
 static const int STAKE_MIN_AGE = 60 * 60 * 24 * 30; // minimum age for coin age
 static const int STAKE_MAX_AGE = 60 * 60 * 24 * 90; // stake age of full weight
 /** Maximum number of script-checking threads allowed */
@@ -88,9 +88,6 @@ static const uint256 hashMerkleRootGBlockTestNet("0x8bf9f18d31dfbe7c0735d8862260
 static const int64 nMaxClockDrift = 2 * 60 * 60;        // two hours
 
 extern CScript COINBASE_FLAGS;
-
-
-
 
 
 
