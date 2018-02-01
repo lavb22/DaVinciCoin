@@ -1530,6 +1530,7 @@ bool CWallet::CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, int
             vwtxPrev.push_back(pcoin.first);
         }
     }
+    printf("Calculate Reward");
     // Calculate coin age reward
     {
         uint64 nCoinAge;
@@ -1539,6 +1540,7 @@ bool CWallet::CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, int
             return error("CreateCoinStake : failed to calculate coin age");
 
         int64 nReward = GetProofOfStakeReward(nCoinAge);
+        printf("- Reward: %lld \n",nReward);
         // Refuse to create mint that has zero or negative reward
         if(nReward <= 0) {
           return false;
