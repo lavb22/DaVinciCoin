@@ -1172,6 +1172,8 @@ int64 GetProofOfStakeReward(int64 nCoinAge, const CBlockIndex* pindex)
     else
     	nSubsidy = 5 * COIN;
 
+    //Halving process  to trim the total ammount of coins to a value near 10,000,000 DCS
+
     CBigNum tSubsidy = nSubsidy;
     CBigNum upperBound = 2500000 * COIN;
     CBigNum lowerBound = 0;
