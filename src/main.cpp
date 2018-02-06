@@ -1158,21 +1158,40 @@ int64 GetProofOfWorkReward(unsigned int nBits)
 }
 
 // DCS: miner's coin stake is rewarded based on coin age spent (coin-days)
-int64 GetProofOfStakeReward(int64 nCoinAge)
+int64 GetProofOfStakeReward(int64 nCoinAge, const CBlockIndex* pindex)
 {
+	int64 nEffectiveMoneySupply = pindex -> nMoneySupply - (7500000 * COIN);
+	if (nEffectiveMoneySupply < 0)
+	return 0;
+
 	static int64 nRewardCoinYear = 20291;  // creation amount per coin-year, about 0.02
     int64 nSubsidy;
 
     if (nCoinAge < 90000)
     	nSubsidy = nCoinAge * 33 / (365 * 33 + 8) * nRewardCoinYear;
-
     else
     	nSubsidy = 5 * COIN;
 
+    CBigNum tSubsidy = nSubsidy;
+    CBigNum upperBound = 2500000 * COIN;
+    CBigNum lowerBound = 0;
+    CBigNum middleValue = upperBound/2;
+
+    while(nEffectiveMoneySupply >= middleValue){
+    	lowerBound = middleValue;
+    	middleValue =(upperBound + lowerBound)/2;
+    	tSubsidy /= 2;
+    }
+
+    nSubsidy = tSubsidy.getuint64();
+
     if (fDebug && GetBoolArg("-printcreation"))
         printf("GetProofOfStakeReward(): create=%s nCoinAge=%" PRI64d"\n", FormatMoney(nSubsidy).c_str(), nCoinAge);
-
-    return nSubsidy;
+    //TEST ################## MUST CHANGE IF NECESSARY
+    if (nSubsidy < CENT)
+    	return CENT;
+    else
+    	return nSubsidy;
 }
 
 // Remove a random orphan block (which does not have any dependent orphans).
@@ -1533,7 +1552,7 @@ bool CTransaction::CheckInputs(CValidationState &state, CCoinsViewCache &inputs,
             if (!GetCoinAge(state, inputs, nCoinAge))
                 return error("CheckInputs() : %s unable to get coin age for coinstake", GetHash().ToString().c_str());
             int64 nStakeReward = GetValueOut() - nValueIn;
-            if (nStakeReward > GetProofOfStakeReward(nCoinAge) - GetMinFee() + MIN_TX_FEE)
+            if (nStakeReward > GetProofOfStakeReward(nCoinAge,inputs.GetBestBlock()) - GetMinFee() + MIN_TX_FEE)
                 return state.DoS(100, error("CheckInputs() : %s stake reward exceeded", GetHash().ToString().c_str()));
         }
         else
