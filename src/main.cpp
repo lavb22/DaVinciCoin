@@ -1187,11 +1187,8 @@ int64 GetProofOfStakeReward(int64 nCoinAge, const CBlockIndex* pindex)
 
     if (fDebug && GetBoolArg("-printcreation"))
         printf("GetProofOfStakeReward(): create=%s nCoinAge=%" PRI64d"\n", FormatMoney(nSubsidy).c_str(), nCoinAge);
-    //TEST ################## MUST CHANGE IF NECESSARY
-    if (nSubsidy < CENT)
-    	return CENT;
-    else
-    	return nSubsidy;
+
+    return nSubsidy;
 }
 
 // Remove a random orphan block (which does not have any dependent orphans).
