@@ -5383,10 +5383,21 @@ void DavincicoinMiner(CWallet *pwallet, bool fProofOfStake)
                         break;
                     }
                     strMintWarning = "";
-                    SetThreadPriority(THREAD_PRIORITY_NORMAL);
-                    CheckWork(pblock, *pwalletMain, reservekey);
-                    SetThreadPriority(THREAD_PRIORITY_LOWEST);
-                    break;
+#ifdef TESTING
+                SetThreadPriority(THREAD_PRIORITY_NORMAL);
+                bool fSuccess = CheckWork(pblock, *pwalletMain, reservekey);
+                SetThreadPriority(THREAD_PRIORITY_LOWEST);
+                if (fSuccess && fGenerateSingleBlock)
+                {
+                    hashSingleStakeBlock = pblock->GetHash();
+                    return;
+                }
+#else
+                SetThreadPriority(THREAD_PRIORITY_NORMAL);
+                CheckWork(pblock, *pwalletMain, reservekey);
+                SetThreadPriority(THREAD_PRIORITY_LOWEST);
+                break;
+#endif
                 }
             }
 

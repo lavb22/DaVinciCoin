@@ -1449,7 +1449,7 @@ bool CWallet::CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, int
             if (CheckStakeKernelHash(nBits, header, postx.nTxOffset + sizeof(CBlockHeader), *pcoin.first, prevoutStake, txNew.nTime - n, hashProofOfStake))
             {
                 // Found a kernel
-                //if (fDebug && GetBoolArg("-printcoinstake"))
+                if (fDebug && GetBoolArg("-printcoinstake"))
                     printf("CreateCoinStake : kernel found\n");
                 vector<valtype> vSolutions;
                 txnouttype whichType;
@@ -1457,15 +1457,15 @@ bool CWallet::CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, int
                 scriptPubKeyKernel = pcoin.first->vout[pcoin.second].scriptPubKey;
                 if (!Solver(scriptPubKeyKernel, whichType, vSolutions))
                 {
-                    //if (fDebug && GetBoolArg("-printcoinstake"))
+                    if (fDebug && GetBoolArg("-printcoinstake"))
                         printf("CreateCoinStake : failed to parse kernel type=%d\n", whichType);
                     break;
                 }
-                //if (fDebug && GetBoolArg("-printcoinstake"))
+                if (fDebug && GetBoolArg("-printcoinstake"))
                     printf("CreateCoinStake : parsed kernel type=%d\n", whichType);
                 if (whichType != TX_PUBKEY && whichType != TX_PUBKEYHASH)
                 {
-                    //if (fDebug && GetBoolArg("-printcoinstake"))
+                    if (fDebug && GetBoolArg("-printcoinstake"))
                         printf("CreateCoinStake : no support for kernel type=%d\n", whichType);
                     break;  // only support pay to public key and pay to address
                 }
@@ -1475,7 +1475,7 @@ bool CWallet::CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, int
                     CKey key;
                     if (!keystore.GetKey(uint160(vSolutions[0]), key))
                     {
-                        //if (fDebug && GetBoolArg("-printcoinstake"))
+                        if (fDebug && GetBoolArg("-printcoinstake"))
                             printf("CreateCoinStake : failed to get key for kernel type=%d\n", whichType);
                         break;  // unable to find corresponding public key
                     }

@@ -68,9 +68,9 @@ using namespace json_spirit;
 using namespace std;
 
 
-// Davincicoin: sync-checkpoint master key
-const std::string CSyncCheckpoint::strMainPubKey = "04c0c707c28533fd5c9f79d2d3a2d80dff259ad8f915241cd14608fb9bc07c74830efe8438f2b272a866b4af5e0c2cc2a9909972aefbd976937e39f46bb38c277c";
-const std::string CSyncCheckpoint::strTestPubKey = "0400c195be8d5194007b3f02249f785a51505776bd8f43cc6d49206163e08a63ad9009c814966921c361b14949c51e281edc9347e7ce0e8c57019df1313a6cac7b";
+// Davincicoin: sync-checkpoint master key - Only the developer of the coin can enforce checkpoints
+const std::string CSyncCheckpoint::strMainPubKey = "";
+const std::string CSyncCheckpoint::strTestPubKey = "04171414f9c1c79b62df77ce9c43529446f527316a90418e88b6e6709caea671a203fe114fd29ce674cdbf2d43126a53fde53a831c5fe97ed53cd94a9a394a1ff7";
 std::string CSyncCheckpoint::strMasterPrivKey = "";
 
 

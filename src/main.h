@@ -63,7 +63,7 @@ static const int64 MAX_MONEY = 10000000 * COIN; //The max ammount of coins in ex
 inline bool MoneyRange(int64 nValue) { return (nValue >= 0 && nValue <= MAX_MONEY); }
 static const int64 MIN_TX_FEE = CENT;
 static const int64 MIN_RELAY_TX_FEE = CENT;
-static const int64 MAX_MINT_PROOF_OF_WORK = 1000 * COIN;
+static const int64 MAX_MINT_PROOF_OF_WORK = 5 * COIN;
 static const int64 MIN_TXOUT_AMOUNT = MIN_TX_FEE;
 /** Coinbase transaction outputs can only be spent after this number of new blocks (network rule) */
 static const int COINBASE_MATURITY = 1; // TODO: check if enough

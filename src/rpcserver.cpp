@@ -299,16 +299,28 @@ Value stop(const Array& params, bool fHelp)
 
 Value generatestake(const Array& params, bool fHelp)
 {
-    if (fHelp || params.size() != 0)
+    if (fHelp || params.size() > 1)
         throw runtime_error(
-            "generatestake\n"
-            "generate a single proof of stake block"
+            "generatestake [PoW]\n"
+            "generate a single proof of stake o proof of work block"
             );
 
     if (GetBoolArg("-stakegen", true))
         throw JSONRPCError(-3, "Stake generation enabled. Won't start another generation.");
 
-    DavincicoinMiner(pwalletMain, true, true);
+
+    if (params.size()==1){
+
+        bool fproofWork = params[0].get_bool();
+
+        if (fproofWork){
+        	DavincicoinMiner(pwalletMain, false, true);
+        	return hashSingleStakeBlock.ToString();
+        }
+    }
+
+   	DavincicoinMiner(pwalletMain, true, true);
+
     return hashSingleStakeBlock.ToString();
 }
 
