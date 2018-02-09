@@ -5,6 +5,7 @@
 
 #include "rpcserver.h"
 #include "main.h"
+#include "base58.h"
 
 using namespace json_spirit;
 using namespace std;
@@ -146,7 +147,40 @@ Value getblockhash(const Array& params, bool fHelp)
     CBlockIndex* pblockindex = FindBlockByHeight(nHeight);
     return pblockindex->phashBlock->GetHex();
 }
+Value getblockwinner (const Array& params,bool fHelp){
 
+    if (fHelp || params.size() != 1)
+        throw runtime_error(
+            "getblockwinner <index>\n"
+            "Returns the public address of the block's creator in the best-block-chain at <index>.");
+
+    int nHeight = params[0].get_int();
+    if (nHeight < 0 || nHeight > nBestHeight)
+        throw runtime_error("Block number out of range.");
+
+    CBlockIndex* pblockindex = FindBlockByHeight(nHeight);
+    CBlock block;
+    block.ReadFromDisk(pblockindex);
+
+    CScript ScriptPub;
+    CTxDestination dest;
+    CDavincicoinAddress address;
+    BOOST_FOREACH (const CTransaction& tx, block.vtx){
+
+    	if (tx.IsCoinBase() || tx.IsCoinStake()){
+
+    		for (int ii=0;ii<tx.vout.size();ii++){
+
+    			ScriptPub = tx.vout[ii].scriptPubKey;
+    			ExtractDestination(ScriptPub,dest);
+
+    			if(address.Set(dest))
+    				return address.ToString();
+        	}
+    	}
+    }
+    throw runtime_error("Error retreiving address.");
+}
 Value getbestblockhash(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() != 0)

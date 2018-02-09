@@ -467,6 +467,7 @@ static const CRPCCommand vRPCCommands[] =
     { "getblock",               &getblock,               false,     false },
     { "getblockhash",           &getblockhash,           false,     false },
     { "getbestblockhash",       &getbestblockhash,       false,     false },
+	{ "getblockwinner",         &getblockwinner,         false,     false },
     { "gettransaction",         &gettransaction,         false,     false },
     { "listtransactions",       &listtransactions,       false,     false },
     { "listaddressgroupings",   &listaddressgroupings,   false,     false },
