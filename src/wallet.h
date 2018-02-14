@@ -154,7 +154,7 @@ public:
     bool LoadCScript(const CScript& redeemScript) { return CCryptoKeyStore::AddCScript(redeemScript); }
 
     //! Adds a watch-only address to the store, and saves it to disk.
-    bool AddWatchOnly(const CScript& dest, int64_t nCreateTime, const CKeyID& destID);
+    bool AddWatchOnly(const CScript& dest, const CKeyID& destID);
     bool RemoveWatchOnly(const CScript &dest) override;
     //! Adds a watch-only address to the store, without saving it to disk (used by LoadWallet)
     bool LoadWatchOnly(const CScript &dest);

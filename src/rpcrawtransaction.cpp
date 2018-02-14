@@ -246,6 +246,7 @@ Value listunspent(const Array& params, bool fHelp)
         }
         entry.push_back(Pair("amount",ValueFromAmount(nValue)));
         entry.push_back(Pair("confirmations",out.nDepth));
+        if (pwalletMain->HaveWatchOnly())
         entry.push_back(Pair("WatchOnly",pwalletMain->HaveWatchOnly(pk)));
         results.push_back(entry);
     }

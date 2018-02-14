@@ -92,9 +92,8 @@ void ImportScript(const CScript& script, const std::string& strLabel, const CKey
 	if (IsMine(*pwalletMain,script)) {
 		throw JSONRPCError(RPC_WALLET_ERROR, "The wallet already contains this address or script");
 	}
-	int64_t nCreateTime = 1;
 	pwalletMain->MarkDirty();
-		if (!pwalletMain->AddWatchOnly(script, 1 /* nCreateTime */, AddID)) {
+		if (!pwalletMain->AddWatchOnly(script, AddID)) {
 				throw JSONRPCError(RPC_WALLET_ERROR, "Error adding address to wallet");
 			}
 	pwalletMain->SetAddressBookName(AddID, strLabel);

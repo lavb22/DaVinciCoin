@@ -917,6 +917,7 @@ Value ListReceived(const Array& params, bool fByAccounts)
             obj.push_back(Pair("account",       strAccount));
             obj.push_back(Pair("amount",        ValueFromAmount(nAmount)));
             obj.push_back(Pair("confirmations", (nConf == std::numeric_limits<int>::max() ? 0 : nConf)));
+            if (pwalletMain->HaveWatchOnly())
             obj.push_back(Pair("WatchOnly",      pwalletMain->HaveWatchOnly(keyid)));
             ret.push_back(obj);
         }
@@ -932,6 +933,7 @@ Value ListReceived(const Array& params, bool fByAccounts)
             obj.push_back(Pair("account",       (*it).first));
             obj.push_back(Pair("amount",        ValueFromAmount(nAmount)));
             obj.push_back(Pair("confirmations", (nConf == std::numeric_limits<int>::max() ? 0 : nConf)));
+            if (pwalletMain->HaveWatchOnly())
             obj.push_back(Pair("WatchOnly",        mapWatchAccount[(*it).first]));
             ret.push_back(obj);
         }
@@ -974,8 +976,13 @@ Value listreceivedbyaccount(const Array& params, bool fHelp)
 static void MaybePushAddress(Object & entry, const CTxDestination &dest)
 {
     CDavincicoinAddress addr;
-    if (addr.Set(dest))
-        entry.push_back(Pair("address", addr.ToString()));
+    if (addr.Set(dest)){
+    	entry.push_back(Pair("address", addr.ToString()));
+    	if (pwalletMain->HaveWatchOnly()){
+    	CKeyID keyid;
+    	addr.GetKeyID(keyid);
+    	entry.push_back(Pair("WatchOnly", pwalletMain->HaveWatchOnly(keyid)));}
+    }
 }
 
 static void PushCoinStakeCategory(Object & entry, const CWalletTx &wtx)

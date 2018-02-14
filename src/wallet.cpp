@@ -2295,7 +2295,7 @@ void CWallet::ClearOrphans()
     }
 }
 
-bool CWallet::AddWatchOnly(const CScript& dest, int64_t nCreateTime, const CKeyID& destID)
+bool CWallet::AddWatchOnly(const CScript& dest, const CKeyID& destID)
 {
 if (!CCryptoKeyStore::AddWatchOnly(dest, destID))
 	return false;
