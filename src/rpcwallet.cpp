@@ -880,11 +880,17 @@ Value ListReceived(const Array& params, bool fByAccounts)
     // Reply
     Array ret;
     map<string, tallyitem> mapAccountTally;
+    map<string, bool> mapWatchAccount;
     BOOST_FOREACH(const PAIRTYPE(CDavincicoinAddress, string)& item, pwalletMain->mapAddressBook)
     {
         const CDavincicoinAddress& address = item.first;
         const string& strAccount = item.second;
+
+        CKeyID keyid;
         map<CDavincicoinAddress, tallyitem>::iterator it = mapTally.find(address);
+
+        address.GetKeyID(keyid);
+
         if (it == mapTally.end() && !fIncludeEmpty)
             continue;
 
@@ -901,6 +907,8 @@ Value ListReceived(const Array& params, bool fByAccounts)
             tallyitem& item = mapAccountTally[strAccount];
             item.nAmount += nAmount;
             item.nConf = min(item.nConf, nConf);
+            mapWatchAccount[strAccount]  = pwalletMain->HaveWatchOnly(keyid);
+
         }
         else
         {
@@ -909,6 +917,7 @@ Value ListReceived(const Array& params, bool fByAccounts)
             obj.push_back(Pair("account",       strAccount));
             obj.push_back(Pair("amount",        ValueFromAmount(nAmount)));
             obj.push_back(Pair("confirmations", (nConf == std::numeric_limits<int>::max() ? 0 : nConf)));
+            obj.push_back(Pair("WatchOnly",      pwalletMain->HaveWatchOnly(keyid)));
             ret.push_back(obj);
         }
     }
@@ -923,6 +932,7 @@ Value ListReceived(const Array& params, bool fByAccounts)
             obj.push_back(Pair("account",       (*it).first));
             obj.push_back(Pair("amount",        ValueFromAmount(nAmount)));
             obj.push_back(Pair("confirmations", (nConf == std::numeric_limits<int>::max() ? 0 : nConf)));
+            obj.push_back(Pair("WatchOnly",        mapWatchAccount[(*it).first]));
             ret.push_back(obj);
         }
     }

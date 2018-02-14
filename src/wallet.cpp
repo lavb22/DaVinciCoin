@@ -523,7 +523,9 @@ bool CWallet::AddToWalletIfInvolvingMe(const uint256 &hash, const CTransaction& 
         }
         else
             WalletUpdateSpent(tx);
+
     }
+
     return false;
 }
 
@@ -1002,7 +1004,7 @@ int64 CWallet::GetImmatureBalance() const
 }
 
 // populate vCoins with vector of spendable COutputs
-void CWallet::AvailableCoins(std::vector<COutput>& vCoins, unsigned int nSpendTime, bool fOnlyConfirmed, const CCoinControl *coinControl) const
+void CWallet::AvailableCoins(std::vector<COutput>& vCoins, unsigned int nSpendTime, bool fOnlyConfirmed, const CCoinControl *coinControl, const bool fWatch) const
 {
     vCoins.clear();
 
@@ -1027,7 +1029,8 @@ void CWallet::AvailableCoins(std::vector<COutput>& vCoins, unsigned int nSpendTi
             for (unsigned int i = 0; i < pcoin->vout.size(); i++) {
                 if (!(pcoin->IsSpent(i)) && IsMine(pcoin->vout[i]) &&
                     !IsLockedCoin((*it).first, i) && pcoin->vout[i].nValue > 0 &&
-                    (!coinControl || !coinControl->HasSelected() || coinControl->IsSelected((*it).first, i)))
+                    (!coinControl || !coinControl->HasSelected() || coinControl->IsSelected((*it).first, i)) &&
+					 (!HaveWatchOnly(pcoin->vout[i].scriptPubKey)|| fWatch))
                 {
                     vCoins.push_back(COutput(pcoin, i, pcoin->GetDepthInMainChain()));}
             }
@@ -2291,3 +2294,53 @@ void CWallet::ClearOrphans()
         UpdatedTransaction(*it);
     }
 }
+
+bool CWallet::AddWatchOnly(const CScript& dest, int64_t nCreateTime, const CKeyID& destID)
+{
+if (!CCryptoKeyStore::AddWatchOnly(dest, destID))
+	return false;
+
+return CWalletDB(strWalletFile).WriteWatchOnly(dest);
+}
+bool CWallet::RemoveWatchOnly(const CScript &dest)
+{
+if (!CCryptoKeyStore::RemoveWatchOnly(dest))
+	return false;
+
+if (!CWalletDB(strWalletFile).EraseWatchOnly(dest))
+	return false;
+
+return true;
+}
+bool CWallet::LoadWatchOnly(const CScript &dest)
+{
+std::vector<valtype> vSolutions;
+txnouttype whichType;
+CKeyID FKeyID;
+
+if (!Solver(dest, whichType, vSolutions))
+	return false;
+
+switch (whichType)
+{
+case TX_NONSTANDARD:
+	return false;
+case TX_PUBKEY:{
+	FKeyID = CPubKey(vSolutions[0]).GetID();
+	//LogPrintf("Se importo una PUBKEY - ");
+	break;}
+case TX_PUBKEYHASH:{
+	FKeyID=CKeyID(uint160(vSolutions[0]));
+	//LogPrintf("Se importo una PUBKEYHASH - ");
+	break;}
+case TX_SCRIPTHASH:
+	{
+	return false;
+	}
+case TX_MULTISIG:{
+	return false;
+	}
+	}
+return CCryptoKeyStore::AddWatchOnly(dest,FKeyID);
+	}
+

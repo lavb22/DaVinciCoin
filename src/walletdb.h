@@ -153,6 +153,8 @@ public:
     bool WriteAccountingEntry(const CAccountingEntry& acentry);
     int64 GetAccountCreditDebit(const std::string& strAccount);
     void ListAccountCreditDebit(const std::string& strAccount, std::list<CAccountingEntry>& acentries);
+    bool WriteWatchOnly(const CScript &script);
+    bool EraseWatchOnly(const CScript &script);
 
     DBErrors ReorderTransactions(CWallet*);
     DBErrors LoadWallet(CWallet* pwallet);

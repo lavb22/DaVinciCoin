@@ -204,7 +204,7 @@ Value listunspent(const Array& params, bool fHelp)
 
     Array results;
     vector<COutput> vecOutputs;
-    pwalletMain->AvailableCoins(vecOutputs, GetTime(), false);
+    pwalletMain->AvailableCoins(vecOutputs, GetTime(),false,NULL,true);
     BOOST_FOREACH(const COutput& out, vecOutputs)
     {
         if (out.nDepth < nMinDepth || out.nDepth > nMaxDepth)
@@ -246,6 +246,7 @@ Value listunspent(const Array& params, bool fHelp)
         }
         entry.push_back(Pair("amount",ValueFromAmount(nValue)));
         entry.push_back(Pair("confirmations",out.nDepth));
+        entry.push_back(Pair("WatchOnly",pwalletMain->HaveWatchOnly(pk)));
         results.push_back(entry);
     }
 

@@ -6,11 +6,18 @@
 #include "keystore.h"
 #include "script.h"
 
-bool CKeyStore::GetPubKey(const CKeyID &address, CPubKey &vchPubKeyOut) const
+bool CBasicKeyStore::GetPubKey(const CKeyID &address, CPubKey &vchPubKeyOut) const
 {
     CKey key;
     if (!GetKey(address, key))
-        return false;
+    {
+    LOCK(cs_KeyStore);
+    WatchKeyMap::const_iterator it = mapWatchKeys.find(address);
+    if (it != mapWatchKeys.end()) {
+    	vchPubKeyOut = it->second;
+    	return true; }
+    return false;
+    }
     vchPubKeyOut = key.GetPubKey();
     return true;
 }
@@ -182,7 +189,7 @@ bool CCryptoKeyStore::GetPubKey(const CKeyID &address, CPubKey& vchPubKeyOut) co
     {
         LOCK(cs_KeyStore);
         if (!IsCrypted())
-            return CKeyStore::GetPubKey(address, vchPubKeyOut);
+            return CBasicKeyStore::GetPubKey(address, vchPubKeyOut);
 
         CryptedKeyMap::const_iterator mi = mapCryptedKeys.find(address);
         if (mi != mapCryptedKeys.end())
@@ -218,4 +225,63 @@ bool CCryptoKeyStore::EncryptKeys(CKeyingMaterial& vMasterKeyIn)
         mapKeys.clear();
     }
     return true;
+}
+
+static bool ExtractPubKey(const CScript &dest, CPubKey& pubKeyOut)
+{
+	std::vector<valtype> vSolutions;
+	txnouttype whichType;
+	if (!Solver(dest, whichType, vSolutions))
+		return false;
+
+	switch (whichType)
+	{
+	case TX_NONSTANDARD:
+		return false;
+	case TX_PUBKEY:
+		pubKeyOut = CPubKey(vSolutions[0]);
+		return true;
+	case TX_PUBKEYHASH:
+		return false;
+	case TX_SCRIPTHASH:
+		return false;
+	case TX_MULTISIG:
+		return false;
+}
+return false;
+}
+bool CBasicKeyStore::AddWatchOnly(const CScript &dest, const CKeyID &keyAdd)
+{
+LOCK(cs_KeyStore);
+CPubKey pubKey;
+setWatchOnly.insert(keyAdd);
+setScriptWatchOnly.insert(dest.GetID());
+if (ExtractPubKey(dest, pubKey))
+mapWatchKeys[pubKey.GetID()] = pubKey;
+return true;
+}
+bool CBasicKeyStore::RemoveWatchOnly(const CScript &dest)
+{
+LOCK(cs_KeyStore);
+setScriptWatchOnly.erase(dest.GetID());
+CPubKey pubKey;
+if (ExtractPubKey(dest, pubKey))
+mapWatchKeys.erase(pubKey.GetID());
+return true;
+}
+bool CBasicKeyStore::HaveWatchOnly(const CScript &dest) const
+{
+LOCK(cs_KeyStore);
+return setScriptWatchOnly.count(dest.GetID()) > 0;
+}
+
+bool CBasicKeyStore::HaveWatchOnly(const CKeyID &id) const
+{
+LOCK(cs_KeyStore);
+return setWatchOnly.count(id) > 0;
+}
+bool CBasicKeyStore::HaveWatchOnly() const
+{
+LOCK(cs_KeyStore);
+return (!setWatchOnly.empty());
 }

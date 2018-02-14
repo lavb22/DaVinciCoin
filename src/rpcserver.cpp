@@ -502,6 +502,7 @@ static const CRPCCommand vRPCCommands[] =
     { "listlockunspent",        &listlockunspent,        false,     false },
     { "getbestblockhash",       &getbestblockhash,       false,     false },
     { "removetransaction",      &removetransaction,      false,     false },
+	{ "importaddress",          &importaddress,          false,     false },
 #ifdef TESTING
     { "generatestake",          &generatestake,          true,      false },
     { "duplicateblock",         &duplicateblock,         true,      false },

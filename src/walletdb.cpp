@@ -109,6 +109,15 @@ void CWalletDB::ListAccountCreditDebit(const string& strAccount, list<CAccountin
     pcursor->close();
 }
 
+bool CWalletDB::WriteWatchOnly(const CScript &dest)
+{	nWalletDBUpdated++;
+	return Write(std::make_pair(std::string("watchs"), dest), '1',true);
+}
+bool CWalletDB::EraseWatchOnly(const CScript &dest)
+{ 	nWalletDBUpdated++;
+	return Erase(std::make_pair(std::string("watchs"), dest));
+}
+
 
 DBErrors
 CWalletDB::ReorderTransactions(CWallet* pwallet)
@@ -261,6 +270,16 @@ ReadKeyValue(CWallet* pwallet, CDataStream& ssKey, CDataStream& ssValue,
                 if (acentry.nOrderPos == -1)
                     fAnyUnordered = true;
             }
+        }
+        else if (strType == "watchs")
+        {
+			CScript script;
+			ssKey >> script;
+			char fYes;
+			ssValue >> fYes;
+			if (fYes == '1'){
+			pwallet->LoadWatchOnly(script);}
+
         }
         else if (strType == "key" || strType == "wkey")
         {

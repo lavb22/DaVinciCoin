@@ -128,7 +128,7 @@ public:
     // check whether we are allowed to upgrade (or already support) to the named feature
     bool CanSupportFeature(enum WalletFeature wf) { return nWalletMaxVersion >= wf; }
 
-    void AvailableCoins(std::vector<COutput>& vCoins, unsigned int nSpendTime, bool fOnlyConfirmed = true, const CCoinControl *coinControl=NULL) const;
+    void AvailableCoins(std::vector<COutput>& vCoins, unsigned int nSpendTime, bool fOnlyConfirmed = true, const CCoinControl *coinControl=NULL, const bool fWatch=false) const;
     bool SelectCoinsMinConf(int64 nTargetValue, int nConfMine, int nConfTheirs, std::vector<COutput> vCoins, std::set<std::pair<const CWalletTx*,unsigned int> >& setCoinsRet, int64& nValueRet) const;
     bool IsLockedCoin(uint256 hash, unsigned int n) const;
     void LockCoin(COutPoint& output);
@@ -152,6 +152,12 @@ public:
     bool LoadCryptedKey(const CPubKey &vchPubKey, const std::vector<unsigned char> &vchCryptedSecret);
     bool AddCScript(const CScript& redeemScript);
     bool LoadCScript(const CScript& redeemScript) { return CCryptoKeyStore::AddCScript(redeemScript); }
+
+    //! Adds a watch-only address to the store, and saves it to disk.
+    bool AddWatchOnly(const CScript& dest, int64_t nCreateTime, const CKeyID& destID);
+    bool RemoveWatchOnly(const CScript &dest) override;
+    //! Adds a watch-only address to the store, without saving it to disk (used by LoadWallet)
+    bool LoadWatchOnly(const CScript &dest);
 
     bool Unlock(const SecureString& strWalletPassphrase);
     bool ChangeWalletPassphrase(const SecureString& strOldWalletPassphrase, const SecureString& strNewWalletPassphrase);
@@ -627,9 +633,12 @@ public:
             if (!IsSpent(i))
             {
                 const CTxOut &txout = vout[i];
+                const CScript &scriptOut = txout.scriptPubKey;
+                if (!pwallet->HaveWatchOnly(scriptOut)){
                  nCredit += pwallet->GetCredit(txout);
                 if (!MoneyRange(nCredit))
                     throw std::runtime_error("CWalletTx::GetAvailableCredit() : value out of range");
+                }
             }
         }
 

@@ -25,3 +25,8 @@ genesis block:
         "e5f043846d50390346be6ec10847e17c97eaf22da501006466a0f732524ef5a8"
     ]
 }
+
+Others accounts:
+
+"mfxrdQbihhuHY2Tkj8pSJWQ3R5xdC66MNK" Private Key: cQXWS1ZeWg4Mfo1Cqpinut66jV2y96bhtcpawYbnvH7QTSqLBjuG 
+"mztvrfTFvr9TbVe4FbtMBGwwUDhdMtXGZk" Private Key: cUnqb5NhhfuHYBKVvyKmC8s8hnYUTzxvyWQ2iV5sAT2PXE5XBsX9
