@@ -253,11 +253,11 @@ public:
         }
         return nDebit;
     }
-    int64 GetCredit(const CTransaction& tx) const
+    int64 GetCredit(const CTransaction& tx, const bool fWatch=false) const
     {
         int64 nCredit = 0;
         BOOST_FOREACH(const CTxOut& txout, tx.vout)
-        {
+        {	if (!CWallet::HaveWatchOnly(txout.scriptPubKey) || fWatch)
             nCredit += GetCredit(txout);
             if (!MoneyRange(nCredit))
                 throw std::runtime_error("CWallet::GetCredit() : value out of range");
@@ -590,7 +590,7 @@ public:
         return nDebitCached;
     }
 
-    int64 GetCredit(bool fUseCache=true) const
+    int64 GetCredit(bool fUseCache=true, const bool fWatch=false) const
     {
         // Must wait until coinbase is safely deep enough in the chain before valuing it
         if ((IsCoinBase() || IsCoinStake()) && GetBlocksToMaturity() > 0)
@@ -599,7 +599,7 @@ public:
         // GetBalance can assume transactions in mapWallet won't change
         if (fUseCache && fCreditCached)
             return nCreditCached;
-        nCreditCached = pwallet->GetCredit(*this);
+        nCreditCached = pwallet->GetCredit(*this,fWatch);
         fCreditCached = true;
         return nCreditCached;
     }

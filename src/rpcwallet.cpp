@@ -1266,7 +1266,7 @@ Value gettransaction(const Array& params, bool fHelp)
         throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid or non-wallet transaction id");
     const CWalletTx& wtx = pwalletMain->mapWallet[hash];
 
-    int64 nCredit = wtx.GetCredit();
+    int64 nCredit = wtx.GetCredit(true,true); //Arguments to consider WatchOnly transactions too
     int64 nDebit = wtx.GetDebit();
     int64 nNet = nCredit - nDebit;
     int64 nFee = (wtx.IsFromMe() ? wtx.GetValueOut() - nDebit : 0);

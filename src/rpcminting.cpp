@@ -77,6 +77,15 @@ Value listminting(const Array& params, bool fHelp)
                 obj.push_back(Pair("minting-probability-90d",   kr.getProbToMintWithinNMinutes(difficulty, 60*24*90)));
                 obj.push_back(Pair("search-interval-in-sec",    searchInterval));
                 obj.push_back(Pair("attempts",                  attemps));
+                if (pwalletMain->HaveWatchOnly()){
+                	CDavincicoinAddress address;
+                	CKeyID keyid;
+                	address.SetString(kr.address);
+                	address.GetKeyID(keyid);
+                obj.push_back(Pair("WatchOnly",                 pwalletMain->HaveWatchOnly(keyid)));
+                }
+
+
                 ret.push_back(obj);
             }
         }
