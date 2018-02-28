@@ -1160,7 +1160,7 @@ int64 GetProofOfWorkReward(unsigned int nBits)
 // DCS: miner's coin stake is rewarded based on coin age spent (coin-days)
 int64 GetProofOfStakeReward(int64 nCoinAge, const CBlockIndex* pindex)
 {
-	int64 nEffectiveMoneySupply = pindex -> nMoneySupply - (7500000 * COIN);
+	int64 nEffectiveMoneySupply = pindex->nHeight==0? 0:(pindex -> nMoneySupply - (7500000 * COIN));
 	if (nEffectiveMoneySupply < 0)
 	return 0;
 
