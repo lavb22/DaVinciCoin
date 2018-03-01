@@ -1229,17 +1229,33 @@ void ThreadDNSAddressSeed()
         } else {
             vector<CNetAddr> vaddr;
             vector<CAddress> vAdd;
-            if (LookupHost(strDNSSeed[seed_idx][1], vaddr))
-            {
-                BOOST_FOREACH(CNetAddr& ip, vaddr)
-                {
-                    int nOneDay = 24*3600;
-                    CAddress addr = CAddress(CService(ip, GetDefaultPort()));
-                    addr.nTime = GetTime() - 3*nOneDay - GetRand(4*nOneDay); // use a random age between 3 and 7 days old
-                    vAdd.push_back(addr);
-                    found++;
-                }
+
+            unsigned int pCounter = 1;
+
+            while (pCounter<6){
+
+				if (LookupHost(strDNSSeed[seed_idx][1], vaddr))
+				{ printf("true\n");
+					BOOST_FOREACH(CNetAddr& ip, vaddr)
+					{
+						int nOneDay = 24*3600;
+						CAddress addr = CAddress(CService(ip, GetDefaultPort()));
+						addr.nTime = GetTime() - 3*nOneDay - GetRand(4*nOneDay); // use a random age between 3 and 7 days old
+						vAdd.push_back(addr);
+						found++;
+					}
+
+					break;
+				}
+				else {
+
+					printf("Failed to connect to %s, trying again in 20seg (%d/5)\n",strDNSSeed[seed_idx][1], pCounter);
+					pCounter++;
+				}
+
+				MilliSleep(20000);
             }
+
             addrman.Add(vAdd, CNetAddr(strDNSSeed[seed_idx][0], true));
         }
     }
