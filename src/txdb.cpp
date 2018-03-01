@@ -224,7 +224,7 @@ bool CBlockTreeDB::LoadBlockIndexGuts()
 
                 // davincicoin related block index fields
                 pindexNew->nMint          = diskindex.nMint;
-                pindexNew->nMoneySupply   = diskindex.nMoneySupply;
+                pindexNew->nMoneySupply   = diskindex.GetBlockHash() == hashGenesisBlock?7500000*COIN:diskindex.nMoneySupply;
                 pindexNew->nFlags         = diskindex.nFlags;
                 pindexNew->nStakeModifier = diskindex.nStakeModifier;
                 pindexNew->prevoutStake   = diskindex.prevoutStake;
