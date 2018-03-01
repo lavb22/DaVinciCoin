@@ -1219,7 +1219,7 @@ void static PruneOrphanBlocks()
 }
 
 
-static const int64 nTargetTimespan = 7 * 24 * 60 * 60;  // one week
+static const int64 nTargetTimespan = 30 * 60;  // half hour
 static const int64 nTargetSpacingWorkMax = 12 * STAKE_TARGET_SPACING; // 2-hour
 
 //
@@ -3235,7 +3235,7 @@ bool LoadBlockIndex()
     {
         hashGenesisBlock = hashGenesisBlockTestNet;
         bnProofOfWorkLimit = CBigNum(~uint256(0) >> 28);
-        nStakeMinAge = 60 * 60 * 24 * 9; // test net min age is 30 days
+        nStakeMinAge = 60 * 60 * 24 * 1; // test net min age is 1 day
         nCoinbaseMaturity = 1;
         bnInitialHashTarget = CBigNum(~uint256(0) >> 29);
         nModifierInterval = 60 * 20; // test net modifier interval is 20 minutes
