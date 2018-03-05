@@ -3275,7 +3275,7 @@ bool InitBlockIndex() {
         //   vMerkleTree: 4a5e1e
 
         // Genesis block
-        const char* pszTimestamp = "This is the genesis block. Davincicoins"; //genesis block message
+        const char* pszTimestamp = "Bitcoin Core is a settlement system not cash? Why cant it be both? 2018-02-01"; //genesis block message
         CTransaction txNew;
         txNew.nTime = 1516108200; //2018-01-16 13:10
         txNew.vin.resize(1);
