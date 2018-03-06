@@ -1,4 +1,4 @@
-# DaVinciCoin (DCS) V0.0.3
+# DaVinciCoin (DCS) V0.0.8
 
  - Development staging tree
  - On early stages, using peercoin as source code.
@@ -7,7 +7,6 @@
  
 - Ammount of avaliable coins: ~10 millions.
 - Pre-Minted: 7.5 millions on Genesis Block.
-- Proof of Steak.
-- Looking for the one who won the PoS block.
+- Proof of Stake.
 - Max award of 5 DCS on proof of stake (Maximum invest of 1000DCS).
 - Only full nodes allowed.
