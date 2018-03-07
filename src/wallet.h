@@ -213,7 +213,7 @@ public:
     std::map<CTxDestination, int64> GetAddressBalances();
 
     bool IsMine(const CTxIn& txin) const;
-    int64 GetDebit(const CTxIn& txin) const;
+    std::pair <int64,CScript> GetDebit(const CTxIn& txin) const;
     bool IsMine(const CTxOut& txout) const
     {
         return ::IsMine(*this, txout.scriptPubKey);
@@ -242,15 +242,41 @@ public:
     {
         return (GetDebit(tx) > 0);
     }
-    int64 GetDebit(const CTransaction& tx) const
+    int64 GetDebit(const CTransaction& tx, std::list<std::pair <int64,CScript>>& ListDebit) const
     {
         int64 nDebit = 0;
+        std::pair <int64,CScript> _DebitData;
+
+        ListDebit.clear();
+
         BOOST_FOREACH(const CTxIn& txin, tx.vin)
         {
-            nDebit += GetDebit(txin);
+        	_DebitData = GetDebit(txin);
+            nDebit += _DebitData.first;
+
+            if (_DebitData.first > 0)
+            ListDebit.push_back(_DebitData);
+
             if (!MoneyRange(nDebit))
                 throw std::runtime_error("CWallet::GetDebit() : value out of range");
         }
+
+        return nDebit;
+    }
+    int64 GetDebit(const CTransaction& tx) const
+    {
+        int64 nDebit = 0;
+        std::pair <int64,CScript> _DebitData;
+
+        BOOST_FOREACH(const CTxIn& txin, tx.vin)
+        {
+        	_DebitData = GetDebit(txin);
+            nDebit += _DebitData.first;
+
+            if (!MoneyRange(nDebit))
+                throw std::runtime_error("CWallet::GetDebit() : value out of range");
+        }
+
         return nDebit;
     }
     int64 GetCredit(const CTransaction& tx, const bool fWatch=false) const
@@ -399,6 +425,7 @@ public:
 
     // memory only
     mutable bool fDebitCached;
+    mutable std::list<std::pair <int64,CScript>> nListDebit; //List of inputs of the TX that are mine
     mutable bool fCreditCached;
     mutable bool fImmatureCreditCached;
     mutable bool fAvailableCreditCached;
@@ -448,6 +475,7 @@ public:
         fChangeCached = false;
         nDebitCached = 0;
         nCreditCached = 0;
+        nListDebit.clear();
         nImmatureCreditCached = 0;
         nAvailableCreditCached = 0;
         nChangeCached = 0;
@@ -585,7 +613,7 @@ public:
             return 0;
         if (fDebitCached)
             return nDebitCached;
-        nDebitCached = pwallet->GetDebit(*this);
+        nDebitCached = pwallet->GetDebit(*this,nListDebit);
         fDebitCached = true;
         return nDebitCached;
     }

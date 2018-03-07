@@ -558,7 +558,7 @@ bool CWallet::IsMine(const CTxIn &txin) const
     return false;
 }
 
-int64 CWallet::GetDebit(const CTxIn &txin) const
+std::pair <int64,CScript> CWallet::GetDebit(const CTxIn &txin) const
 {
     {
         LOCK(cs_wallet);
@@ -567,12 +567,14 @@ int64 CWallet::GetDebit(const CTxIn &txin) const
         {
             const CWalletTx& prev = (*mi).second;
             if (txin.prevout.n < prev.vout.size())
-                if (IsMine(prev.vout[txin.prevout.n]))
-                    return prev.vout[txin.prevout.n].nValue;
+                if (IsMine(prev.vout[txin.prevout.n])){
+                    return std::make_pair(prev.vout[txin.prevout.n].nValue, prev.vout[txin.prevout.n].scriptPubKey);
+                }
         }
     }
-    return 0;
+    return std::make_pair(0, CScript());
 }
+
 
 bool CWallet::IsChange(const CTxOut& txout) const
 {
@@ -693,6 +695,20 @@ void CWalletTx::GetAmounts(list<pair<CTxDestination, int64> >& listReceived,
             listReceived.push_back(make_pair(address, txout.nValue));
     }
 
+    if (nDebit > 0)
+    for (std::list<std::pair <int64,CScript>>::iterator it=nListDebit.begin(); it != nListDebit.end();++it)
+    {
+    	CTxDestination txinaddress;
+
+        if (!ExtractDestination((*it).second, txinaddress))
+        {
+            printf("CWalletTx::GetAmounts: Unknown transaction type found (input), txid %s\n",
+                   this->GetHash().ToString().c_str());
+            txinaddress = CNoDestination();
+        }
+        listSent.push_back(make_pair(txinaddress, -((*it).first)));
+    }
+
 }
 
 void CWalletTx::GetAccountAmounts(const string& strAccount, int64& nReceived,
@@ -706,12 +722,25 @@ void CWalletTx::GetAccountAmounts(const string& strAccount, int64& nReceived,
     list<pair<CTxDestination, int64> > listSent;
     GetAmounts(listReceived, listSent, allFee, strSentAccount);
 
-    if (strAccount == strSentAccount)
-    {
-        BOOST_FOREACH(const PAIRTYPE(CTxDestination,int64)& s, listSent)
-            nSent += s.second;
-        nFee = allFee;
-    }
+    BOOST_FOREACH(const PAIRTYPE(CTxDestination,int64)& s, listSent)
+   		{	if (s.second < 0){
+   		            if (pwallet->mapAddressBook.count(s.first))
+   		            {
+   		                map<CTxDestination, string>::const_iterator mi = pwallet->mapAddressBook.find(s.first);
+   		                if (mi != pwallet->mapAddressBook.end() && (*mi).second == strAccount)
+   		                	nSent -= s.second;
+   		            }
+   		            else if (strAccount.empty())
+   		            {
+   		            	nSent -= s.second;
+   		            }
+   			}
+   		}
+
+    if(nSent > 0)
+    	nFee = allFee;
+
+        if (strAccount == strSentAccount)
     {
         LOCK(pwallet->cs_wallet);
         BOOST_FOREACH(const PAIRTYPE(CTxDestination,int64)& r, listReceived)

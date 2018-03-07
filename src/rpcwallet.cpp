@@ -557,7 +557,8 @@ Value getbalance(const Array& params, bool fHelp)
                     nBalance += r.second;
             }
             BOOST_FOREACH(const PAIRTYPE(CTxDestination,int64)& r, listSent)
-                nBalance -= r.second;
+            	if (r.second >= 0)
+            		nBalance -= r.second;
             nBalance -= allFee;
         }
         return  ValueFromAmount(nBalance);
@@ -1010,7 +1011,7 @@ void ListTransactions(const CWalletTx& wtx, const string& strAccount, int nMinDe
     if ((!listSent.empty() || nFee != 0) && (fAllAccounts || strAccount == strSentAccount))
     {
         BOOST_FOREACH(const PAIRTYPE(CTxDestination, int64)& s, listSent)
-        {
+        {	if (s.second >= 0){
             Object entry;
             entry.push_back(Pair("account", strSentAccount));
             MaybePushAddress(entry, s.first);
@@ -1023,6 +1024,7 @@ void ListTransactions(const CWalletTx& wtx, const string& strAccount, int nMinDe
             if (fLong)
                 WalletTxToJSON(wtx, entry);
             ret.push_back(entry);
+        }
         }
     }
 
@@ -1163,9 +1165,19 @@ Value listaccounts(const Array& params, bool fHelp)
         list<pair<CTxDestination, int64> > listReceived;
         list<pair<CTxDestination, int64> > listSent;
         wtx.GetAmounts(listReceived, listSent, nFee, strSentAccount);
-        mapAccountBalances[strSentAccount] -= nFee;
-        BOOST_FOREACH(const PAIRTYPE(CTxDestination, int64)& s, listSent)
-            mapAccountBalances[strSentAccount] -= s.second;
+
+        BOOST_FOREACH(const PAIRTYPE(CTxDestination, int64)& s, listSent){
+        	if (s.second < 0){
+            if (pwalletMain->mapAddressBook.count(s.first)){
+            	strSentAccount = pwalletMain->mapAddressBook[s.first];
+
+                mapAccountBalances[pwalletMain->mapAddressBook[s.first]] += s.second;}
+            else{
+            	strSentAccount = "";
+            	mapAccountBalances[""] += s.second;}
+        	}
+        }
+
         if (wtx.GetDepthInMainChain() >= nMinDepth)
         {
             BOOST_FOREACH(const PAIRTYPE(CTxDestination, int64)& r, listReceived)
