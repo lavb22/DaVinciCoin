@@ -504,7 +504,7 @@ int64 GetAccountBalance(CWalletDB& walletdb, const string& strAccount, int nMinD
 
         if (nReceived != 0 && wtx.GetDepthInMainChain() >= nMinDepth)
             nBalance += nReceived;
-        nBalance -= nSent + nFee;
+        nBalance -= nSent;
     }
 
     // Tally internal accounting entries
@@ -1170,7 +1170,6 @@ Value listaccounts(const Array& params, bool fHelp)
         	if (s.second < 0){
             if (pwalletMain->mapAddressBook.count(s.first)){
             	strSentAccount = pwalletMain->mapAddressBook[s.first];
-
                 mapAccountBalances[pwalletMain->mapAddressBook[s.first]] += s.second;}
             else{
             	strSentAccount = "";

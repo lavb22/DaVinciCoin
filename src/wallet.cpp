@@ -722,27 +722,25 @@ void CWalletTx::GetAccountAmounts(const string& strAccount, int64& nReceived,
     list<pair<CTxDestination, int64> > listSent;
     GetAmounts(listReceived, listSent, allFee, strSentAccount);
 
-    BOOST_FOREACH(const PAIRTYPE(CTxDestination,int64)& s, listSent)
-   		{	if (s.second < 0){
-   		            if (pwallet->mapAddressBook.count(s.first))
-   		            {
-   		                map<CTxDestination, string>::const_iterator mi = pwallet->mapAddressBook.find(s.first);
-   		                if (mi != pwallet->mapAddressBook.end() && (*mi).second == strAccount)
-   		                	nSent -= s.second;
-   		            }
-   		            else if (strAccount.empty())
-   		            {
-   		            	nSent -= s.second;
-   		            }
-   			}
-   		}
+		LOCK(pwallet->cs_wallet);
+		BOOST_FOREACH(const PAIRTYPE(CTxDestination,int64)& s, listSent)
+			{	if (s.second < 0){
+						if (pwallet->mapAddressBook.count(s.first))
+						{
+							map<CTxDestination, string>::const_iterator mi = pwallet->mapAddressBook.find(s.first);
+							if (mi != pwallet->mapAddressBook.end() && (*mi).second == strAccount)
+								nSent -= s.second;
+						}
+						else if (strAccount.empty())
+						{
+							nSent -= s.second;
+						}
+				}
+			}
 
-    if(nSent > 0)
-    	nFee = allFee;
+		if(nSent > 0)
+			nFee = allFee;
 
-        if (strAccount == strSentAccount)
-    {
-        LOCK(pwallet->cs_wallet);
         BOOST_FOREACH(const PAIRTYPE(CTxDestination,int64)& r, listReceived)
         {
             if (pwallet->mapAddressBook.count(r.first))
@@ -756,7 +754,7 @@ void CWalletTx::GetAccountAmounts(const string& strAccount, int64& nReceived,
                 nReceived += r.second;
             }
         }
-    }
+
 }
 
 void CWalletTx::AddSupportingTransactions()
