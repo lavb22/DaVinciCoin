@@ -50,10 +50,7 @@ bool AppInit(int argc, char* argv[])
             // First part of help message is specific to bitcoind / RPC client
             std::string strUsage = _("davincicoin version") + " " + FormatFullVersion() + "\n\n" +
                 _("Usage:") + "\n" +
-                  "  davincicoind [options]                     " + "\n" +
-                  "  davincicoind [options] <command> [params]  " + _("Send command to -server or davincicoind") + "\n" +
-                  "  davincicoind [options] help                " + _("List commands") + "\n" +
-                  "  davincicoind [options] help <command>      " + _("Get help for a command") + "\n";
+                  "  davincicoind [options]                     " + "\n";
 
             strUsage += "\n" + HelpMessage(HMM_DAVINCICOIND);
             strUsage += "\n" + HelpMessageCli(false);
@@ -69,8 +66,16 @@ bool AppInit(int argc, char* argv[])
 
         if (fCommandLine)
         {
-            int ret = CommandLineRPC(argc, argv);
-            exit(ret);
+        	std::string strUsage = "\n"+_("Sending rpc commands to server is disabled for Davincicoind.") + "\n" +
+        						   _("Please use Davincoin-cli instead.") + "\n\n";
+
+        	fprintf(stdout, "%s", strUsage.c_str());
+        	return false;
+
+        	//Send command to RPC Server
+            /*int ret = CommandLineRPC(argc, argv);
+            exit(ret);*/
+
         }
 #if !defined(WIN32)
         fDaemon = GetBoolArg("-daemon", false);
