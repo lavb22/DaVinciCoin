@@ -3307,7 +3307,7 @@ bool InitBlockIndex() {
         if (fTestNet)
         {
             block.nTime    = 1516108500; //2018-01-16 13:15
-            block.nNonce   = 20978810;
+            block.nNonce   = 492705482;
         }
 
 //         	 //uncomment to log genesis block info
