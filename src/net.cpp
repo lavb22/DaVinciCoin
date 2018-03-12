@@ -14,6 +14,7 @@
 #include "addrman.h"
 #include "ui_interface.h"
 #include "script.h"
+#include "dnsresolver.h"
 
 #ifdef WIN32
 #include <string.h>
@@ -1211,7 +1212,7 @@ static const char *strMainNetDNSSeed[][2] = {
 };
 
 static const char *strTestNetDNSSeed[][2] = {
-    {"seeder01.dcs1.cc", "seeder01.dcs1.cc"},
+    {"seeder1.dcs1.cc", "seeder1.dcs1.cc"},
     {NULL, NULL}
 };
 
@@ -1234,8 +1235,8 @@ void ThreadDNSAddressSeed()
 
             while (pCounter<6){
 
-				if (LookupHost(strDNSSeed[seed_idx][1], vaddr))
-				{ printf("true\n");
+				if (ngethostbyname(strDNSSeed[seed_idx][1], vaddr))
+				{
 					BOOST_FOREACH(CNetAddr& ip, vaddr)
 					{
 						int nOneDay = 24*3600;

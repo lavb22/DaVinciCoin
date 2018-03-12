@@ -63,6 +63,7 @@ DAVINCICOIN_CORE_H = \
   compat.h \
   crypter.h \
   db.h \
+  dnsresolver.h \
   hash.h \
   init.h \
   key.h \
@@ -118,6 +119,7 @@ libdavincicoin_server_a_SOURCES = \
   leveldbwrapper.cpp \
   main.cpp \
   net.cpp \
+  dnsresolver.cpp \
   noui.cpp \
   rpcblockchain.cpp \
   rpcnet.cpp \
