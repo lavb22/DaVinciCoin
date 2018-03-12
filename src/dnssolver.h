@@ -1,5 +1,5 @@
 /*
- * dnsresolver.h
+ * dnssolver.h
  *
  *  Created on: 12 mar. 2018
  *      Author: lvalles

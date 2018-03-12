@@ -14,7 +14,7 @@
 #include "addrman.h"
 #include "ui_interface.h"
 #include "script.h"
-#include "dnsresolver.h"
+#include "dnssolver.h"
 
 #ifdef WIN32
 #include <string.h>
