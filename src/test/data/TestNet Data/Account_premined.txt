@@ -30,3 +30,11 @@ Others accounts:
 
 "mfxrdQbihhuHY2Tkj8pSJWQ3R5xdC66MNK" Private Key: cQXWS1ZeWg4Mfo1Cqpinut66jV2y96bhtcpawYbnvH7QTSqLBjuG 
 "mztvrfTFvr9TbVe4FbtMBGwwUDhdMtXGZk" Private Key: cUnqb5NhhfuHYBKVvyKmC8s8hnYUTzxvyWQ2iV5sAT2PXE5XBsX9
+
+
+./davincicoin-cli dumpprivkey mikpeQbkMoWxN1weRYYJNDHJHR5RBuV6TF
+cNFXRoTuniYdbHNnnJAwgHDMqBpdUxoHf3GrTS1YsY5uM9u9GHLT
+
+
+deployer@node02:~$ ./davincicoin-cli dumpprivkey mnhXaFE2KQK2yK7yJ7j6vhXr85Xp591MTz
+cTUAStG9J3pggLBsv5qKNkHkrPt6UCgyJozwUmF8TELcdfajUNpg
