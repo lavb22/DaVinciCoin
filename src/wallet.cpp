@@ -718,7 +718,7 @@ void CWalletTx::GetAmounts(list<pair<CTxDestination, int64> >& listReceived,
         }
 
         else
-            listSent.push_back(make_pair(txinaddress, nVal - nFee));
+            listSent.push_back(make_pair(txinaddress, -(ntxoutValue + nFee)));
     }
 
 }
