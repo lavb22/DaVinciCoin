@@ -648,6 +648,7 @@ void CWalletTx::GetAmounts(list<pair<CTxDestination, int64> >& listReceived,
                            list<pair<CTxDestination, int64> >& listSent, int64& nFee, string& strSentAccount) const
 {
     nFee = 0;
+    int64 ntxoutValue = 0;
     listReceived.clear();
     listSent.clear();
     strSentAccount = strFromAccount;
@@ -687,8 +688,10 @@ void CWalletTx::GetAmounts(list<pair<CTxDestination, int64> >& listReceived,
         }
 
         // If we are debited by the transaction, add the output as a "sent" entry
-        if (nDebit > 0)
+        if (nDebit > 0){
             listSent.push_back(make_pair(address, txout.nValue));
+            ntxoutValue += txout.nValue;
+        }
 
         // If we are receiving the output, add it as a "received" entry
         if (fIsMine)
@@ -706,7 +709,16 @@ void CWalletTx::GetAmounts(list<pair<CTxDestination, int64> >& listReceived,
                    this->GetHash().ToString().c_str());
             txinaddress = CNoDestination();
         }
-        listSent.push_back(make_pair(txinaddress, -((*it).first)));
+
+        int64 nVal = ntxoutValue - ((*it).first);
+
+        if (nVal >= 0){
+        	ntxoutValue=nVal;
+            listSent.push_back(make_pair(txinaddress, -((*it).first)));
+        }
+
+        else
+            listSent.push_back(make_pair(txinaddress, nVal - nFee));
     }
 
 }
